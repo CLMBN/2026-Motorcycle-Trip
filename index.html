@@ -488,6 +488,39 @@
   .callout ul.plain li{color:var(--paper);}
   .callout ul.plain li b{color:var(--white);}
 
+  .lock-form{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+  .lock-form input[type=password]{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:14px;
+    padding:9px 12px;
+    border:2px solid var(--ink);
+    border-radius:5px;
+    background:var(--white);
+    color:var(--ink);
+    flex:1;
+    min-width:180px;
+    max-width:260px;
+  }
+  .lock-form input[type=password]:focus-visible{outline:3px solid var(--rust); outline-offset:2px;}
+  .lock-error{
+    color:var(--rust-2);
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    margin-top:12px;
+  }
+  .lock-content{
+    white-space:pre-wrap;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    line-height:1.6;
+    background:var(--white);
+    border:2px solid var(--ink);
+    border-radius:8px;
+    padding:20px 24px;
+    max-width:64ch;
+  }
+
   footer{
     text-align:center;
     margin-top:40px;
@@ -778,7 +811,15 @@
     </section>
 
     <section class="panel" id="lodging">
-      <p class="pack-intro">Reservation details will go here once bookings are confirmed.</p>
+      <div class="lock-gate" id="lodging-lock" data-salt="+PfAmrm67+FULHFHcMD8Mg==" data-iv="PX3EV/bOL8iXhu4/" data-ciphertext="tbpCkSqLIYg6/X8pwXAKWgStVPWc5YWFt5FTBGIlzX77srYXz2n/dIWJK3DILeXsmDxc2e4NMwX8qPPbuebz8YkEPeR9OouxLXevvP8=">
+        <p class="pack-intro">This tab is locked. Enter the shared passphrase to view lodging details.</p>
+        <form class="lock-form" id="lodging-form" autocomplete="off">
+          <input type="password" id="lodging-pass" placeholder="Passphrase" autocomplete="off" required>
+          <button type="submit" class="btn primary-map">Unlock</button>
+        </form>
+        <p class="lock-error" id="lodging-error" hidden>Incorrect passphrase.</p>
+      </div>
+      <div class="lock-content" id="lodging-content" hidden></div>
     </section>
 
   </div>
@@ -805,6 +846,55 @@
       item.classList.toggle('checked', checkbox.checked);
     });
   });
+
+  // Lodging tab: content is AES-GCM encrypted, key derived from a shared
+  // passphrase via PBKDF2. Nothing sensitive is ever stored in the page
+  // itself — only ciphertext, which is safe to be public.
+  (() => {
+    const lock = document.getElementById('lodging-lock');
+    if (!lock) return;
+    const form = document.getElementById('lodging-form');
+    const passInput = document.getElementById('lodging-pass');
+    const errorEl = document.getElementById('lodging-error');
+    const contentEl = document.getElementById('lodging-content');
+
+    const b64ToBytes = b64 => Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+
+    async function decrypt(passphrase) {
+      const salt = b64ToBytes(lock.dataset.salt);
+      const iv = b64ToBytes(lock.dataset.iv);
+      const ciphertext = b64ToBytes(lock.dataset.ciphertext);
+      const enc = new TextEncoder();
+
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey']
+      );
+      const key = await crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt, iterations: 250000, hash: 'SHA-256' },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['decrypt']
+      );
+      const plainBuf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ciphertext);
+      return new TextDecoder().decode(plainBuf);
+    }
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      errorEl.hidden = true;
+      try {
+        const text = await decrypt(passInput.value);
+        contentEl.textContent = text;
+        contentEl.hidden = false;
+        lock.hidden = true;
+      } catch (err) {
+        errorEl.hidden = false;
+        passInput.value = '';
+        passInput.focus();
+      }
+    });
+  })();
 </script>
 
 </body>
