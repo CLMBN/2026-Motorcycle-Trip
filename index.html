@@ -397,6 +397,26 @@
   .tag.mandatory{background:var(--ink); color:var(--white);}
   .tag.leg{background:var(--mustard); color:var(--ink); font-family:'IBM Plex Mono',monospace;}
 
+  .lodging-suggest{margin-top:24px;}
+  .lodge-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:10px;}
+  @media (max-width:640px){.lodge-grid{grid-template-columns:1fr;}}
+  .lodge-card{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    padding:12px 14px;
+    border:2px solid var(--ink);
+    border-radius:6px;
+    background:var(--white);
+    text-decoration:none;
+    color:var(--ink);
+    transition:transform 0.12s ease;
+  }
+  .lodge-card:hover{transform:translateY(-1px);}
+  .lodge-name{font-family:'Inter',sans-serif; font-weight:700; font-size:14px;}
+  .lodge-type{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.05em; text-transform:uppercase; color:var(--rust-2);}
+  .lodge-note{font-size:12px; color:var(--muted); line-height:1.4;}
+
   .logistics-box{
     margin-top:20px;
     background:var(--paper-2);
@@ -766,6 +786,32 @@
             <li>Legs 2 and 3 run a bit over 2h because that's where the next real town falls — still well under the original day's total.</li>
           </ul>
         </div>
+
+        <div class="lodging-suggest">
+          <p class="block-label">Hotel options in Bethel, ME — for you to review</p>
+          <div class="lodge-grid">
+            <a class="lodge-card" href="https://www.bethelinn.com/" target="_blank" rel="noopener">
+              <span class="lodge-name">Bethel Inn Resort</span>
+              <span class="lodge-type">Resort · golf &amp; spa</span>
+              <span class="lodge-note">On the village common, ~6 mi to Sunday River. Higher-end, full amenities.</span>
+            </a>
+            <a class="lodge-card" href="https://www.thesudburyinn.com/" target="_blank" rel="noopener">
+              <span class="lodge-name">The Sudbury Inn</span>
+              <span class="lodge-type">Inn · restaurant &amp; pub</span>
+              <span class="lodge-note">18 rooms right on Main St, with the Suds Pub downstairs for dinner.</span>
+            </a>
+            <a class="lodge-card" href="https://holidaehouse.com/" target="_blank" rel="noopener">
+              <span class="lodge-name">Holidae House B&amp;B</span>
+              <span class="lodge-type">Bed &amp; breakfast</span>
+              <span class="lodge-note">8-room Victorian on Main St, in-town, cooked breakfast included.</span>
+            </a>
+            <a class="lodge-card" href="https://www.bethelvillagemotel.com/" target="_blank" rel="noopener">
+              <span class="lodge-name">Bethel Village Motel</span>
+              <span class="lodge-type">Motel · budget</span>
+              <span class="lodge-note">Simple in-town motel, easy bike parking — closest match to the Colonial Motel style.</span>
+            </a>
+          </div>
+        </div>
       </div>
 
       <!-- NEW DAY 2 -->
@@ -809,6 +855,32 @@
             <li>Colonial Motel, North Conway booking is <b>unchanged</b> — same overnight as the original plan.</li>
             <li>This day has slack (~157 mi vs. the ~180 mi cap) — room for a longer lunch or a detour if you want one.</li>
           </ul>
+        </div>
+
+        <div class="lodging-suggest">
+          <p class="block-label">Hotel options in North Conway, NH — for you to review</p>
+          <div class="lodge-grid">
+            <a class="lodge-card" href="https://www.thecolonialmotel.com/rooms/" target="_blank" rel="noopener">
+              <span class="lodge-name">Colonial Motel</span>
+              <span class="lodge-type">Motel · current pick</span>
+              <span class="lodge-note">2431 White Mountain Hwy. Already the plan's overnight — request 2 Queen Beds.</span>
+            </a>
+            <a class="lodge-card" href="https://www.briarcliffmotel.com/" target="_blank" rel="noopener">
+              <span class="lodge-name">Briarcliff Motel</span>
+              <span class="lodge-type">Motel</span>
+              <span class="lodge-note">2304 White Mountain Hwy, in the heart of the valley, decades-old family motel.</span>
+            </a>
+            <a class="lodge-card" href="https://www.whitetrellismotel.com/" target="_blank" rel="noopener">
+              <span class="lodge-name">White Trellis Motel</span>
+              <span class="lodge-type">Motel</span>
+              <span class="lodge-note">3245 White Mountain Hwy, quiet 5-acre pine setting, free parking.</span>
+            </a>
+            <a class="lodge-card" href="https://www.greengranite.com/" target="_blank" rel="noopener">
+              <span class="lodge-name">Green Granite Inn</span>
+              <span class="lodge-type">Hotel · Ascend Collection</span>
+              <span class="lodge-note">1515 White Mountain Hwy. A step up — indoor pool &amp; hot tub after a long ride.</span>
+            </a>
+          </div>
         </div>
       </div>
 
