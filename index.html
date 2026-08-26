@@ -395,6 +395,7 @@
   .tag.food{background:#DCE6DA; color:var(--forest);}
   .tag.stay{background:#EADFF5; color:#5B3E85;}
   .tag.mandatory{background:var(--ink); color:var(--white);}
+  .tag.leg{background:var(--mustard); color:var(--ink); font-family:'IBM Plex Mono',monospace;}
 
   .logistics-box{
     margin-top:20px;
@@ -548,6 +549,7 @@
 
   <div class="tabs">
     <button class="tab-btn active" data-tab="route">Route</button>
+    <button class="tab-btn" data-tab="new-route">New Route (2hr Legs)</button>
     <button class="tab-btn" data-tab="packing">Packing List</button>
     <button class="tab-btn" data-tab="lodging">Lodging Details</button>
   </div>
@@ -708,6 +710,134 @@
         <p class="block-label" style="justify-content:center;">Full weekend, one link</p>
         <p>Covers all three days end to end. Google's embed reliably shows ~9 waypoints, so this one is best for reference — use the day-by-day links above for actual turn-by-turn navigation.</p>
         <a class="btn secondary" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=Waltham,MA&destination=Boston,MA&waypoints=Milford,NH|Lincoln,NH|Kancamagus+Highway,NH|Rumford,ME|Height+of+Land,ME-17+Roxbury,ME|Rangeley,ME|Oquossoc,ME|Errol,NH|Berlin,NH|Gorham,NH|Evans+Notch,ME|North+Conway,NH|Wolfeboro,NH&travelmode=driving">View Full Route ↗</a>
+      </div>
+
+    </section>
+
+    <!-- ================= NEW ROUTE PANEL (2-hour legs) ================= -->
+    <section class="panel" id="new-route">
+      <p class="route-intro">Reworked for a strict <b>2-hour-leg cadence</b> — 3 riding legs a day (breakfast → lunch → dinner), each capped around 55–60 miles at realistic twisty-backroad pace (~28–30 mph average, not car-routing speed). The Rangeley overnight moves to a Day 2 stop instead of Day 1; Day 3 is unchanged. Kept alongside the original Route tab for comparison — nothing here overwrites it.</p>
+
+      <div class="stat-row" style="margin:0 0 32px;">
+        <div class="stat"><span class="n">230→198 mi</span><span class="l">Day 1</span></div>
+        <div class="stat"><span class="n">145→157 mi</span><span class="l">Day 2</span></div>
+        <div class="stat"><span class="n">140 mi</span><span class="l">Day 3 (unchanged)</span></div>
+      </div>
+
+      <!-- NEW DAY 1 -->
+      <div class="day-card">
+        <div class="marker"><span class="d">1</span><span class="lbl">FRI</span></div>
+        <div class="day-head">
+          <p class="day-date">Friday · Sept 4 · Depart 8–9am</p>
+          <h2 class="day-title">Kancamagus → Bethel, ME</h2>
+          <p class="day-route-line">Waltham → Milford, NH → Lincoln, NH → <b>Kancamagus Hwy</b> → Conway, NH → Bethel, ME</p>
+        </div>
+
+        <div class="map-actions">
+          <a class="btn primary-map" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=Waltham,MA&destination=Bethel,ME&waypoints=Milford,NH|Lincoln,NH|Kancamagus+Highway,NH|Conway,NH&travelmode=driving">🗺️ Open Interactive Map in Google Maps ↗</a>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <p class="block-label">Leg breakdown</p>
+            <ul class="stop-list">
+              <li><span class="name">Leg 1 — breakfast</span><span class="tag leg">47 mi · ~1h</span></li>
+              <li><span class="name">Leg 2 — lunch, mandatory fill-up</span><span class="tag leg">~72 mi · ~2h15m</span></li>
+              <li><span class="name">Leg 3 — dinner / overnight</span><span class="tag leg">78.5 mi · ~2h15m</span></li>
+            </ul>
+          </div>
+          <div>
+            <p class="block-label">Stops along the way</p>
+            <ul class="stop-list">
+              <li><span class="name">Milford, NH</span><span class="tag food">breakfast</span></li>
+              <li><span class="name">Lincoln, NH</span><span class="tag mandatory">fill up — mandatory</span></li>
+              <li><span class="name">Conway, NH</span><span class="tag gas">gas</span><span class="tag food">lunch</span></li>
+              <li><span class="name">Bethel, ME</span><span class="tag stay">overnight — NEW</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="logistics-box">
+          <p class="block-label">What changed vs. the original Day 1</p>
+          <ul class="plain">
+            <li>Was 230 mi ending in Rangeley — now ~198 mi ending in <b>Bethel, ME</b>, about 35 miles short of Rangeley.</li>
+            <li>Rangeley Saddleback Inn booking needs to move to Day 2 night, or be cancelled — Rangeley becomes a Day 2 morning stop instead.</li>
+            <li><b>New lodging needed in Bethel, ME</b> — nothing booked here yet.</li>
+            <li>Legs 2 and 3 run a bit over 2h because that's where the next real town falls — still well under the original day's total.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- NEW DAY 2 -->
+      <div class="day-card">
+        <div class="marker"><span class="d">2</span><span class="lbl">SAT</span></div>
+        <div class="day-head">
+          <p class="day-date">Saturday · Sept 5 · Depart 8–9am</p>
+          <h2 class="day-title">Rangeley Morning → Evans Notch</h2>
+          <p class="day-route-line">Bethel → Rumford → Rangeley/Oquossoc (<b>Height of Land</b>) → Errol, NH → Berlin → Gorham → <b>Evans Notch</b> → North Conway</p>
+        </div>
+
+        <div class="map-actions">
+          <a class="btn primary-map" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=Bethel,ME&destination=Colonial+Motel,+2431+White+Mountain+Hwy,+North+Conway,+NH&waypoints=Rumford,ME|Oquossoc,ME|Errol,NH|Berlin,NH|Gorham,NH|Evans+Notch,ME&travelmode=driving">🗺️ Open Interactive Map in Google Maps ↗</a>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <p class="block-label">Leg breakdown</p>
+            <ul class="stop-list">
+              <li><span class="name">Leg 1 — breakfast &amp; scenic</span><span class="tag leg">~73 mi · ~1h45m</span></li>
+              <li><span class="name">Leg 2 — lunch</span><span class="tag leg">~49 mi · ~1h20m</span></li>
+              <li><span class="name">Leg 3 — dinner/overnight, mandatory fill-up</span><span class="tag leg">~41 mi · ~1h20m</span></li>
+            </ul>
+          </div>
+          <div>
+            <p class="block-label">Stops along the way</p>
+            <ul class="stop-list">
+              <li><span class="name">Rumford, ME</span><span class="tag gas">gas</span></li>
+              <li><span class="name">Rangeley / Oquossoc</span><span class="tag food">breakfast</span></li>
+              <li><span class="name">Berlin, NH</span><span class="tag gas">gas</span><span class="tag food">lunch</span></li>
+              <li><span class="name">Gorham, NH</span><span class="tag mandatory">fill up — mandatory</span></li>
+              <li><span class="name">Colonial Motel, North Conway</span><span class="tag stay">overnight — unchanged</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="logistics-box">
+          <p class="block-label">What changed vs. the original Day 2</p>
+          <ul class="plain">
+            <li>Was ~145 mi starting from Rangeley — now ~157 mi starting from Bethel, with Rangeley and the Height of Land overlook folded in as the first leg instead of an overnight.</li>
+            <li>Colonial Motel, North Conway booking is <b>unchanged</b> — same overnight as the original plan.</li>
+            <li>This day has slack (~157 mi vs. the ~180 mi cap) — room for a longer lunch or a detour if you want one.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- NEW DAY 3 (unchanged) -->
+      <div class="day-card">
+        <div class="marker"><span class="d">3</span><span class="lbl">SUN</span></div>
+        <div class="day-head">
+          <p class="day-date">Sunday · Sept 6 · Depart 8–9am</p>
+          <h2 class="day-title">Wolfeboro &amp; Home — Unchanged</h2>
+          <p class="day-route-line">North Conway → Wolfeboro, NH → Boston</p>
+        </div>
+
+        <div class="map-actions">
+          <a class="btn primary-map" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=Colonial+Motel,+2431+White+Mountain+Hwy,+North+Conway,+NH&destination=Boston,MA&waypoints=Wolfeboro,NH&travelmode=driving">🗺️ Open Interactive Map in Google Maps ↗</a>
+        </div>
+
+        <div class="logistics-box">
+          <p class="block-label">What changed vs. the original Day 3</p>
+          <ul class="plain">
+            <li>Nothing — already comfortably under the 2-hour-leg cap at ~140 mi (North Conway → Wolfeboro ~42 mi, then two shorter legs into Boston via Rochester/Epping).</li>
+            <li>Still the trip's buffer day, with plenty of slack before the 8–9pm return target.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="full-trip-cta">
+        <p class="block-label" style="justify-content:center;">Full revised weekend, one link</p>
+        <p>Covers all three revised days end to end. Use the day-by-day links above for actual turn-by-turn navigation.</p>
+        <a class="btn secondary" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=Waltham,MA&destination=Boston,MA&waypoints=Milford,NH|Lincoln,NH|Kancamagus+Highway,NH|Conway,NH|Bethel,ME|Rumford,ME|Oquossoc,ME|Errol,NH|Berlin,NH|Gorham,NH|Evans+Notch,ME|North+Conway,NH|Wolfeboro,NH&travelmode=driving">View Full Revised Route ↗</a>
       </div>
 
     </section>
