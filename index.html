@@ -51,6 +51,9 @@
   }
 
   .wrap{max-width:920px;margin:0 auto;padding:0 20px 80px;position:relative;z-index:1;}
+  @media (max-width:640px){
+    .wrap{padding:0 8px 60px;}
+  }
 
   /* ---------- HEADER ---------- */
   header{
@@ -97,6 +100,10 @@
   .stat:first-child{border-left:none;}
   .stat .n{font-size:22px;font-weight:500;color:var(--rust-2);display:block;}
   .stat .l{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
+  @media (max-width:640px){
+    .stat{padding:0 12px;}
+    .stat .n{font-size:18px;}
+  }
 
   /* ---------- TABS ---------- */
   .tabs{
@@ -159,6 +166,9 @@
     border-radius:0 8px 8px 8px;
     padding:36px clamp(16px,4vw,44px) 44px;
   }
+  @media (max-width:640px){
+    .panel-shell{padding:24px 12px 32px;}
+  }
   .panel{display:none;}
   .panel.active{display:block;animation:fade 0.35s ease;}
   @media (prefers-reduced-motion: reduce){
@@ -210,6 +220,13 @@
   }
   .marker .d{font-size:20px;}
   .marker .lbl{font-size:8px; letter-spacing:0.08em;}
+  @media (max-width:640px){
+    .day-card{padding-left:48px;}
+    .day-card:not(:last-child)::before{left:18px;}
+    .marker{width:36px; height:36px;}
+    .marker .d{font-size:15px;}
+    .marker .lbl{font-size:6px;}
+  }
 
   .day-head{margin-bottom:6px;}
   .day-date{
