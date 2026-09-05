@@ -740,7 +740,10 @@
           </ul>
         </div>
 
-        <p class="gallery-note">📸 See Day 1 photos in the <b>Photos</b> tab.</p>
+        <div class="day-gallery">
+          <p class="block-label">Photos from the road</p>
+          <div class="day-photos-preview" data-day="1"></div>
+        </div>
       </div>
 
       <!-- DAY 2 -->
@@ -816,7 +819,10 @@
           </div>
         </div>
 
-        <p class="gallery-note">📸 Day 2 photos will show up in the <b>Photos</b> tab.</p>
+        <div class="day-gallery">
+          <p class="block-label">Photos from the road</p>
+          <div class="day-photos-preview" data-day="2"></div>
+        </div>
       </div>
 
       <!-- DAY 3 -->
@@ -871,6 +877,11 @@
             <li>Small unavoidable overlap with Saturday's road through Yarmouth/Freeport leaving Brunswick — everything from Cape Elizabeth on is fresh road.</li>
             <li>Gloucester → Waltham cuts inland for the final stretch since Waltham itself isn't on the coast.</li>
           </ul>
+        </div>
+
+        <div class="day-gallery">
+          <p class="block-label">Photos from the road</p>
+          <div class="day-photos-preview" data-day="3"></div>
         </div>
       </div>
 
@@ -1105,6 +1116,43 @@
       item.classList.toggle('checked', checkbox.checked);
     });
   });
+
+  // Route tab: single-row photo preview per day, cloned from the Photos
+  // tab (so the image data lives in the page only once) that jumps to
+  // that day's section in the Photos tab when tapped.
+  (() => {
+    const photosPanel = document.getElementById('photos');
+    if (!photosPanel) return;
+    const dayGalleries = Array.from(photosPanel.querySelectorAll(':scope > .day-gallery'));
+
+    function jumpToPhotosDay(day) {
+      const tabBtn = document.querySelector('.tab-btn[data-tab="photos"]');
+      if (tabBtn) tabBtn.click();
+      const heading = dayGalleries[day - 1]?.querySelector('.block-label');
+      if (heading) heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    document.querySelectorAll('.day-photos-preview').forEach(preview => {
+      const day = parseInt(preview.dataset.day, 10);
+      const dayGallery = dayGalleries[day - 1];
+      const imgs = dayGallery ? dayGallery.querySelectorAll('.gallery-thumb img') : [];
+      if (!imgs.length) {
+        preview.innerHTML = '<p class="gallery-empty">No photos added yet.</p>';
+        return;
+      }
+      const grid = document.createElement('div');
+      grid.className = 'gallery-grid';
+      imgs.forEach(img => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'gallery-thumb';
+        btn.appendChild(img.cloneNode(true));
+        btn.addEventListener('click', () => jumpToPhotosDay(day));
+        grid.appendChild(btn);
+      });
+      preview.appendChild(grid);
+    });
+  })();
 
   // Photo gallery lightbox: tap a thumbnail to see it full screen with
   // location + description; prev/next cycles through that stop's photos.
