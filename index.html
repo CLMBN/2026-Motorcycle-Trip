@@ -467,11 +467,14 @@
     margin:0 0 8px;
   }
   .gallery-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
+    display:flex;
+    flex-wrap:nowrap;
     gap:8px;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:6px;
+    scrollbar-width:thin;
   }
-  @media (max-width:480px){.gallery-grid{grid-template-columns:repeat(3,1fr);}}
   .gallery-thumb{
     position:relative;
     border:2px solid var(--ink);
@@ -481,7 +484,8 @@
     padding:0;
     cursor:pointer;
     display:block;
-    width:100%;
+    flex:0 0 auto;
+    width:96px;
     aspect-ratio:1/1;
   }
   .gallery-thumb img{width:100%; height:100%; object-fit:cover; display:block;}
