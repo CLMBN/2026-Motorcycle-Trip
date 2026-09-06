@@ -691,6 +691,105 @@
 </head>
 <body>
 
+<script>
+  // This is a large single-file page (lots of embedded photos), so on a
+  // slow connection the tail of the document — including a script placed
+  // at the end — may not have arrived yet. Attaching these handlers here,
+  // as the very first thing in <body>, and re-querying the DOM at click
+  // time (not caching NodeLists up front) means tab navigation, the
+  // packing checklist, and the photo lightbox all work as soon as the
+  // relevant markup has loaded, without waiting on the rest of the page.
+
+  let lbGroup = [];
+  let lbIndex = 0;
+
+  function renderLightbox() {
+    const btn = lbGroup[lbIndex];
+    const lbImg = document.getElementById('lightbox-img');
+    const lbVideo = document.getElementById('lightbox-video');
+    const lbLocation = document.getElementById('lightbox-location');
+    const lbDesc = document.getElementById('lightbox-desc');
+    const lbCounter = document.getElementById('lightbox-counter');
+    const video = btn.querySelector('video source');
+    lbVideo.pause();
+    if (video) {
+      lbImg.hidden = true;
+      lbVideo.hidden = false;
+      lbVideo.src = video.src;
+      lbVideo.load();
+    } else {
+      lbVideo.hidden = true;
+      lbVideo.removeAttribute('src');
+      const img = btn.querySelector('img');
+      lbImg.hidden = false;
+      lbImg.src = img.src;
+      lbImg.alt = img.alt || '';
+    }
+    const location = btn.dataset.location || '';
+    const mapUrl = btn.dataset.map || '';
+    lbLocation.innerHTML = location + (mapUrl ? ` <a href="${mapUrl}" target="_blank" rel="noopener">📍 map</a>` : '');
+    lbDesc.textContent = btn.dataset.desc || '';
+    lbCounter.textContent = lbGroup.length > 1 ? `${lbIndex + 1} / ${lbGroup.length}` : '';
+  }
+
+  function openLightbox(group, index) {
+    lbGroup = group;
+    lbIndex = index;
+    renderLightbox();
+    document.getElementById('lightbox').hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    document.getElementById('lightbox').hidden = true;
+    document.getElementById('lightbox-video').pause();
+    document.body.style.overflow = '';
+  }
+
+  function stepLightbox(delta) {
+    lbIndex = (lbIndex + delta + lbGroup.length) % lbGroup.length;
+    renderLightbox();
+  }
+
+  document.addEventListener('click', e => {
+    const tabBtn = e.target.closest('.tab-btn');
+    if (tabBtn) {
+      document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      tabBtn.classList.add('active');
+      const panel = document.getElementById(tabBtn.dataset.tab);
+      if (panel) panel.classList.add('active');
+      return;
+    }
+
+    const thumb = e.target.closest('.stop-gallery .gallery-thumb');
+    if (thumb) {
+      const group = Array.from(thumb.closest('.stop-gallery').querySelectorAll('.gallery-thumb'));
+      openLightbox(group, group.indexOf(thumb));
+      return;
+    }
+
+    if (e.target.closest('#lightbox-close')) { closeLightbox(); return; }
+    if (e.target.closest('#lightbox-prev')) { stepLightbox(-1); return; }
+    if (e.target.closest('#lightbox-next')) { stepLightbox(1); return; }
+    if (e.target.id === 'lightbox') { closeLightbox(); return; }
+  });
+
+  document.addEventListener('change', e => {
+    if (e.target.matches('.pack-item input')) {
+      e.target.closest('.pack-item').classList.toggle('checked', e.target.checked);
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    const lightbox = document.getElementById('lightbox');
+    if (!lightbox || lightbox.hidden) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') stepLightbox(-1);
+    if (e.key === 'ArrowRight') stepLightbox(1);
+  });
+</script>
+
 <div class="wrap">
 
   <header>
@@ -1205,24 +1304,6 @@
 </div>
 
 <script>
-  const tabs = document.querySelectorAll('.tab-btn');
-  const panels = document.querySelectorAll('.panel');
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      panels.forEach(p => p.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById(tab.dataset.tab).classList.add('active');
-    });
-  });
-
-  document.querySelectorAll('.pack-item').forEach(item => {
-    const checkbox = item.querySelector('input');
-    checkbox.addEventListener('change', () => {
-      item.classList.toggle('checked', checkbox.checked);
-    });
-  });
-
   // Route tab: single-row photo preview per day, cloned from the Photos
   // tab (so the image data lives in the page only once) that jumps to
   // that day's section in the Photos tab when tapped.
@@ -1257,80 +1338,6 @@
         grid.appendChild(btn);
       });
       preview.appendChild(grid);
-    });
-  })();
-
-  // Photo gallery lightbox: tap a thumbnail to see it full screen with
-  // location + description; prev/next cycles through that stop's photos.
-  (() => {
-    const lightbox = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lightbox-img');
-    const lbVideo = document.getElementById('lightbox-video');
-    const lbLocation = document.getElementById('lightbox-location');
-    const lbDesc = document.getElementById('lightbox-desc');
-    const lbCounter = document.getElementById('lightbox-counter');
-    let currentGroup = [];
-    let currentIndex = 0;
-
-    function render() {
-      const btn = currentGroup[currentIndex];
-      const video = btn.querySelector('video source');
-      lbVideo.pause();
-      if (video) {
-        lbImg.hidden = true;
-        lbVideo.hidden = false;
-        lbVideo.src = video.src;
-        lbVideo.load();
-      } else {
-        lbVideo.hidden = true;
-        lbVideo.removeAttribute('src');
-        const img = btn.querySelector('img');
-        lbImg.hidden = false;
-        lbImg.src = img.src;
-        lbImg.alt = img.alt || '';
-      }
-      const location = btn.dataset.location || '';
-      const mapUrl = btn.dataset.map || '';
-      lbLocation.innerHTML = location + (mapUrl ? ` <a href="${mapUrl}" target="_blank" rel="noopener">📍 map</a>` : '');
-      lbDesc.textContent = btn.dataset.desc || '';
-      lbCounter.textContent = currentGroup.length > 1 ? `${currentIndex + 1} / ${currentGroup.length}` : '';
-    }
-
-    function open(group, index) {
-      currentGroup = group;
-      currentIndex = index;
-      render();
-      lightbox.hidden = false;
-      document.body.style.overflow = 'hidden';
-    }
-
-    function close() {
-      lightbox.hidden = true;
-      lbVideo.pause();
-      document.body.style.overflow = '';
-    }
-
-    function step(delta) {
-      currentIndex = (currentIndex + delta + currentGroup.length) % currentGroup.length;
-      render();
-    }
-
-    document.querySelectorAll('.stop-gallery').forEach(group => {
-      const thumbs = Array.from(group.querySelectorAll('.gallery-thumb'));
-      thumbs.forEach((btn, i) => {
-        btn.addEventListener('click', () => open(thumbs, i));
-      });
-    });
-
-    document.getElementById('lightbox-close').addEventListener('click', close);
-    document.getElementById('lightbox-prev').addEventListener('click', () => step(-1));
-    document.getElementById('lightbox-next').addEventListener('click', () => step(1));
-    lightbox.addEventListener('click', e => { if (e.target === lightbox) close(); });
-    document.addEventListener('keydown', e => {
-      if (lightbox.hidden) return;
-      if (e.key === 'Escape') close();
-      if (e.key === 'ArrowLeft') step(-1);
-      if (e.key === 'ArrowRight') step(1);
     });
   })();
 </script>
