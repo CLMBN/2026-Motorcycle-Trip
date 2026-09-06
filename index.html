@@ -240,6 +240,18 @@
     text-transform:uppercase;
     color:var(--muted);
   }
+  .planned-badge{
+    display:inline-block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    padding:3px 10px;
+    border-radius:20px;
+    background:var(--ink);
+    color:var(--white);
+    margin:6px 0 2px;
+  }
   .day-title{
     font-family:'Bebas Neue',sans-serif;
     font-size:clamp(28px,4vw,38px);
@@ -686,7 +698,7 @@
     <div class="stat-row">
       <div class="stat"><span class="n">Sept 4–6</span><span class="l">2026</span></div>
       <div class="stat"><span class="n">3 days</span><span class="l">2 nights</span></div>
-      <div class="stat"><span class="n">~520 mi</span><span class="l">backroads only</span></div>
+      <div class="stat"><span class="n">~466 mi</span><span class="l">backroads only</span></div>
       <div class="stat"><span class="n">2×</span><span class="l">Honda Rebel</span></div>
     </div>
   </header>
@@ -706,7 +718,7 @@
       <div class="stat-row" style="margin:0 0 32px;">
         <div class="stat"><span class="n">~162 mi</span><span class="l">Day 1</span></div>
         <div class="stat"><span class="n">~178 mi</span><span class="l">Day 2</span></div>
-        <div class="stat"><span class="n">~180 mi</span><span class="l">Day 3</span></div>
+        <div class="stat"><span class="n">~126 mi</span><span class="l">Day 3</span></div>
       </div>
 
       <!-- DAY 1 -->
@@ -828,9 +840,10 @@
       <div class="day-card">
         <div class="marker"><span class="d">3</span><span class="lbl">SUN</span></div>
         <div class="day-head">
-          <p class="day-date">Sunday · Sept 6 · Depart 8–9am</p>
-          <h2 class="day-title">The Seacoast Way Home</h2>
-          <p class="day-route-line">Brunswick, ME → <b>Cape Elizabeth</b> → Old Orchard Beach → Kennebunkport → Ogunquit → York → Portsmouth, NH → <b>Newburyport &amp; the North Shore</b> → Gloucester → 12 Lincoln St, Waltham</p>
+          <p class="day-date">Sunday · Sept 6 · Home by 6:30pm</p>
+          <span class="planned-badge">The planned route for tomorrow</span>
+          <h2 class="day-title">A Few Strategic Miles of Coast, Then Home</h2>
+          <p class="day-route-line">Freeport, ME → Kennebunkport, ME → <b>Rt 1A</b> at York Beach → <b>Rt 1A</b> at Hampton Beach, NH → I-95 → 12 Lincoln St, Waltham</p>
         </div>
 
         <div class="route-visual">
@@ -839,30 +852,25 @@
         </div>
 
         <div class="map-actions">
-          <a class="btn primary-map" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=Brunswick,ME&destination=12+Lincoln+St,+Waltham,+MA&waypoints=Cape+Elizabeth,ME|Old+Orchard+Beach,ME|Kennebunkport,ME|Ogunquit,ME|York,ME|Portsmouth,NH|Newburyport,MA|Gloucester,MA|Marblehead,MA&travelmode=driving">🗺️ Open Interactive Map in Google Maps ↗</a>
+          <a class="btn primary-map" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=Econo+Lodge,+537+US-1,+Freeport,+ME&destination=12+Lincoln+St,+Waltham,+MA&waypoints=Kennebunkport,ME|York+Beach,ME|Hampton+Beach,NH&travelmode=driving">🗺️ Open Interactive Map in Google Maps ↗</a>
         </div>
 
         <div class="grid-2">
           <div>
             <p class="block-label">Leg breakdown</p>
             <ul class="stop-list">
-              <li><span class="name">Leg 1 — Cape Elizabeth, breakfast</span><span class="tag leg">~35 mi · ~1h</span></li>
-              <li><span class="name">Leg 2 — beach towns, lunch</span><span class="tag leg">~30 mi · ~1h15m</span></li>
-              <li><span class="name">Leg 3 — York to Portsmouth, gas</span><span class="tag leg">~30 mi · ~1h15m</span></li>
-              <li><span class="name">Leg 4 — North Shore, dinner</span><span class="tag leg">~45 mi · ~1h30m</span></li>
-              <li><span class="name">Leg 5 — arrival home</span><span class="tag leg">~40 mi · ~1h</span></li>
+              <li><span class="name">Leg 1 — I-295/I-95 to Kennebunkport, lunch</span><span class="tag leg">~36 mi · ~45m</span></li>
+              <li><span class="name">Leg 2 — Rt 1A dip at York Beach</span><span class="tag leg">~21 mi · ~35m</span></li>
+              <li><span class="name">Leg 3 — Rt 1A dip at Hampton Beach, gas</span><span class="tag leg">~16 mi · ~30m</span></li>
+              <li><span class="name">Leg 4 — I-95 home</span><span class="tag leg">~53 mi · ~1h</span></li>
             </ul>
           </div>
           <div>
             <p class="block-label">Stops along the way</p>
             <ul class="stop-list">
-              <li><span class="name">Brunswick, ME</span><span class="tag gas">gas before departure</span></li>
-              <li><span class="name">Cape Elizabeth, ME</span><span class="tag scenic">Portland Head Light</span></li>
               <li><span class="name">Kennebunkport, ME</span><span class="tag food">lunch</span></li>
-              <li><span class="name">York, ME</span><span class="tag gas">gas</span></li>
-              <li><span class="name">Portsmouth, NH</span><span class="tag food">snack</span></li>
-              <li><span class="name">Newburyport, MA</span><span class="tag gas">gas</span></li>
-              <li><span class="name">Gloucester, MA</span><span class="tag food">dinner</span></li>
+              <li><span class="name">York Beach, ME</span><span class="tag scenic">Rt 1A dip — Short/Long Sands Beach</span></li>
+              <li><span class="name">Hampton Beach, NH</span><span class="tag gas">gas</span><span class="tag scenic">Rt 1A dip</span></li>
               <li><span class="name">12 Lincoln St, Waltham</span><span class="tag stay">arrival</span></li>
             </ul>
           </div>
@@ -871,10 +879,10 @@
         <div class="logistics-box">
           <p class="block-label">Logistics to keep in mind</p>
           <ul class="plain">
-            <li>Hugs the water the whole way — Cape Elizabeth, the York County beach towns, the NH seacoast, and the MA North Shore (Newburyport, Gloucester, Marblehead) — so you'll see ocean from the road most of the day.</li>
-            <li><b>This is longer than the original plan</b> — ~180 mi vs. ~141 mi, and slower than the mileage suggests: it's Labor Day Sunday, so expect heavy beach traffic through Old Orchard Beach, Wells, Ogunquit, York, and Hampton. Consider an earlier 7am departure to build in a buffer.</li>
-            <li>Small unavoidable overlap with Saturday's road through Yarmouth/Freeport leaving Brunswick — everything from Cape Elizabeth on is fresh road.</li>
-            <li>Gloucester → Waltham cuts inland for the final stretch since Waltham itself isn't on the coast.</li>
+            <li><b>This is still a plan, not a recap</b> — Day 3 hasn't happened yet.</li>
+            <li>Needs to be home by 6:30pm, so this trades a full seacoast crawl for I-295/I-95 as the backbone, with just 3 strategic <b>Rt 1A</b> dips to ride close to the water — Kennebunkport, York Beach, and Hampton Beach.</li>
+            <li>~126 miles total — about 9 mi and 30–45 min longer than the direct highway route (~117 mi), which is the cost of the 3 coastal dips.</li>
+            <li>It's Labor Day Sunday, so expect some beach traffic through the Rt 1A stretches — the highway legs in between should move fast.</li>
           </ul>
         </div>
 
@@ -887,7 +895,7 @@
       <div class="full-trip-cta">
         <p class="block-label" style="justify-content:center;">Full weekend, one link</p>
         <p>Covers all three days end to end. Use the day-by-day links above for actual turn-by-turn navigation.</p>
-        <a class="btn secondary" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=12+Lincoln+St,+Waltham,+MA&destination=12+Lincoln+St,+Waltham,+MA&waypoints=Milford,NH|137+State+Rte+101,+Bedford,+NH|Penacook+Lake,+Concord,+NH|Bristol,NH|Last+Chair+Brewery,+Plymouth,+NH|Route+118,+NH|Lincoln,NH|Kancamagus+Highway,NH|Pemigewasset+Overlook,NH|Lower+Falls+Scenic+Area,NH|The+Station+Bistro,+Conway,NH|Hurricane+Mountain+Road,+Chatham,+NH|DiCocoa%27s,+Bethel,ME|Ram+%26+Bull,+Brunswick,ME|Doubling+Point+Lighthouse,+Arrowsic,ME|Freeport,ME|Cape+Elizabeth,ME|Kennebunkport,ME|York,ME|Portsmouth,NH|Newburyport,MA|Gloucester,MA&travelmode=driving">View Full Route ↗</a>
+        <a class="btn secondary" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=12+Lincoln+St,+Waltham,+MA&destination=12+Lincoln+St,+Waltham,+MA&waypoints=Milford,NH|137+State+Rte+101,+Bedford,+NH|Penacook+Lake,+Concord,+NH|Bristol,NH|Last+Chair+Brewery,+Plymouth,+NH|Route+118,+NH|Lincoln,NH|Kancamagus+Highway,NH|Pemigewasset+Overlook,NH|Lower+Falls+Scenic+Area,NH|The+Station+Bistro,+Conway,NH|Hurricane+Mountain+Road,+Chatham,+NH|DiCocoa%27s,+Bethel,ME|Ram+%26+Bull,+Brunswick,ME|Doubling+Point+Lighthouse,+Arrowsic,ME|Freeport,ME|Kennebunkport,ME|York+Beach,ME|Hampton+Beach,NH&travelmode=driving">View Full Route ↗</a>
       </div>
 
     </section>
