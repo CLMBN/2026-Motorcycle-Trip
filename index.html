@@ -252,9 +252,14 @@
   .marker .d{font-size:20px;}
   .marker .lbl{font-size:8px; letter-spacing:0.08em;}
   @media (max-width:640px){
-    .day-card{padding-left:48px;}
-    .day-card:not(:last-child)::before{left:18px;}
-    .marker{width:36px; height:36px;}
+    .day-card{padding-left:0;}
+    .day-card:not(:last-child)::before{display:none;}
+    .marker{
+      position:static;
+      display:inline-flex;
+      width:36px; height:36px;
+      margin-bottom:10px;
+    }
     .marker .d{font-size:15px;}
     .marker .lbl{font-size:6px;}
   }
