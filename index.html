@@ -599,67 +599,6 @@
   }
   .full-trip-cta p{font-size:13px; color:var(--muted); margin:8px 0 14px;}
 
-  /* ---------- PACKING TAB ---------- */
-  .pack-intro{
-    font-family:'Fraunces',serif;
-    font-size:17px;
-    color:var(--forest-2);
-    max-width:64ch;
-    margin:0 0 32px;
-  }
-  .pack-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:24px;
-  }
-  @media (max-width:640px){.pack-grid{grid-template-columns:1fr;}}
-  .pack-cat{
-    border:2px solid var(--ink);
-    border-radius:8px;
-    overflow:hidden;
-  }
-  .pack-cat-head{
-    background:var(--forest);
-    color:var(--white);
-    padding:11px 16px;
-    display:flex;
-    align-items:center;
-    gap:9px;
-    font-family:'Bebas Neue',sans-serif;
-    font-size:19px;
-    letter-spacing:0.03em;
-  }
-  .pack-cat-head svg{flex-shrink:0;}
-  .pack-cat-body{padding:14px 16px 16px; background:var(--white);}
-  .pack-item{
-    display:flex;
-    align-items:flex-start;
-    gap:10px;
-    padding:7px 0;
-    border-bottom:1px solid #ECE5D3;
-    font-size:14px;
-    cursor:pointer;
-  }
-  .pack-item:last-child{border-bottom:none;}
-  .pack-item input{
-    margin-top:3px;
-    width:15px;height:15px;
-    accent-color:var(--rust);
-    flex-shrink:0;
-    cursor:pointer;
-  }
-  .pack-item .note{
-    display:block;
-    font-size:12px;
-    color:var(--muted);
-    margin-top:2px;
-  }
-  .pack-item.checked span.label{
-    text-decoration:line-through;
-    color:var(--muted);
-  }
-  .pack-cat.essential .pack-cat-head{background:var(--rust);}
-
   .callout{
     margin-top:30px;
     background:var(--ink);
@@ -696,9 +635,9 @@
   // slow connection the tail of the document — including a script placed
   // at the end — may not have arrived yet. Attaching these handlers here,
   // as the very first thing in <body>, and re-querying the DOM at click
-  // time (not caching NodeLists up front) means tab navigation, the
-  // packing checklist, and the photo lightbox all work as soon as the
-  // relevant markup has loaded, without waiting on the rest of the page.
+  // time (not caching NodeLists up front) means tab navigation and the
+  // photo lightbox all work as soon as the relevant markup has loaded,
+  // without waiting on the rest of the page.
 
   let lbGroup = [];
   let lbIndex = 0;
@@ -775,12 +714,6 @@
     if (e.target.id === 'lightbox') { closeLightbox(); return; }
   });
 
-  document.addEventListener('change', e => {
-    if (e.target.matches('.pack-item input')) {
-      e.target.closest('.pack-item').classList.toggle('checked', e.target.checked);
-    }
-  });
-
   document.addEventListener('keydown', e => {
     const lightbox = document.getElementById('lightbox');
     if (!lightbox || lightbox.hidden) return;
@@ -806,7 +739,6 @@
 
   <div class="tabs">
     <button class="tab-btn active" data-tab="route">Route</button>
-    <button class="tab-btn" data-tab="packing">Packing List</button>
     <button class="tab-btn" data-tab="photos">Photos</button>
   </div>
 
@@ -1010,104 +942,6 @@
         <p class="block-label" style="justify-content:center;">Full weekend, one link</p>
         <p>Covers all three days end to end. Use the day-by-day links above for actual turn-by-turn navigation.</p>
         <a class="btn secondary" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=12+Lincoln+St,+Waltham,+MA&destination=12+Lincoln+St,+Waltham,+MA&waypoints=Milford,NH|137+State+Rte+101,+Bedford,+NH|Penacook+Lake,+Concord,+NH|Bristol,NH|Last+Chair+Brewery,+Plymouth,+NH|Route+118,+NH|Lincoln,NH|Kancamagus+Highway,NH|Pemigewasset+Overlook,NH|Lower+Falls+Scenic+Area,NH|The+Station+Bistro,+Conway,NH|Hurricane+Mountain+Road,+Chatham,+NH|DiCocoa%27s,+Bethel,ME|Ram+%26+Bull,+Brunswick,ME|Doubling+Point+Lighthouse,+Arrowsic,ME|Freeport,ME|Fortunes+Rocks+Beach,+Biddeford,+ME|Goose+Rocks+Beach,+Kennebunkport,+ME|Rye,NH|Bass+Beach,+Rye,+NH|Coffee+Break+Cafe,+Hampton,+NH|Hammond+Castle+Museum,+Gloucester,+MA|Revere+Beach,MA|La+Esquina+Del+Sabor,+Winthrop,+MA|Deer+Island,+Winthrop,+MA|12+Lincoln+St,+Waltham,+MA|Grist+Mill+Pond,+Sudbury,+MA&travelmode=driving">View Full Route ↗</a>
-      </div>
-
-    </section>
-
-    <!-- ================= PACKING PANEL ================= -->
-    <section class="panel" id="packing">
-      <p class="pack-intro">Packed for the T-Bags saddle roll — heavier gear low and centered near the seat, clothing up top, anything you'll need mid-ride kept in the most accessible outer pocket.</p>
-
-      <div class="pack-grid">
-
-        <div class="pack-cat essential">
-          <div class="pack-cat-head">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5z"/></svg>
-            Riding Gear
-          </div>
-          <div class="pack-cat-body">
-            <label class="pack-item"><input type="checkbox"><span class="label">Helmet, gloves, jacket, boots<span class="note">worn, not packed</span></span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Rain gear<span class="note">pack even if forecast is clear</span></span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Ear plugs</span></label>
-          </div>
-        </div>
-
-        <div class="pack-cat">
-          <div class="pack-cat-head">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="14" rx="2"/><path d="M9 7V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v3"/></svg>
-            Clothing <span class="note" style="color:#DCE6DA;font-weight:400;margin-left:auto;">2 nights</span>
-          </div>
-          <div class="pack-cat-body">
-            <label class="pack-item"><input type="checkbox"><span class="label">3 base layers / riding shirts</span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">1 spare riding pants or jeans</span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Underwear &amp; socks ×3–4<span class="note">moisture-wicking if you have them</span></span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Light fleece / hoodie<span class="note">Rangeley &amp; the notches get cool at night</span></span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Casual shoes for evenings off the bike</span></label>
-          </div>
-        </div>
-
-        <div class="pack-cat">
-          <div class="pack-cat-head">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-            Toiletries &amp; Docs
-          </div>
-          <div class="pack-cat-body">
-            <label class="pack-item"><input type="checkbox"><span class="label">Toothbrush, toothpaste, deodorant</span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Sunscreen &amp; lip balm<span class="note">wind + sun exposure adds up fast</span></span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Personal meds</span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">License, registration, insurance card</span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Card + some cash<span class="note">small-town spots aren't always card-friendly</span></span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Phone + charger, offline maps downloaded</span></label>
-          </div>
-        </div>
-
-        <div class="pack-cat essential">
-          <div class="pack-cat-head">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-            Tools &amp; Bike Essentials
-          </div>
-          <div class="pack-cat-body">
-            <label class="pack-item"><input type="checkbox"><span class="label">Tire repair kit + CO2 inflator / mini compressor<span class="note">critical — you'll be far from services on the Kanc &amp; Evans Notch</span></span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Basic tool kit<span class="note">multi-tool, zip ties, electrical/duct tape</span></span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Spare bulb / fuse kit</span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Backup bungees or straps for the saddle bag</span></label>
-          </div>
-        </div>
-
-        <div class="pack-cat">
-          <div class="pack-cat-head">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-            First Aid
-          </div>
-          <div class="pack-cat-body">
-            <label class="pack-item"><input type="checkbox"><span class="label">Bandages &amp; antiseptic wipes</span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Ibuprofen / pain reliever</span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Blister pads</span></label>
-          </div>
-        </div>
-
-        <div class="pack-cat">
-          <div class="pack-cat-head">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2h8l-1 14a3 3 0 0 1-6 0L8 2z"/><path d="M7 16h10"/></svg>
-            Comfort &amp; Convenience
-          </div>
-          <div class="pack-cat-body">
-            <label class="pack-item"><input type="checkbox"><span class="label">Reusable water bottle<span class="note">dehydration sneaks up on long twisty rides</span></span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Snack bars<span class="note">for the no-services stretches</span></span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Sunglasses + spare / clip-ons</span></label>
-            <label class="pack-item"><input type="checkbox"><span class="label">Small dry bag or ziplocks<span class="note">keep electronics &amp; docs dry inside the roll-top</span></span></label>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="callout">
-        <p class="block-label">Packing the T-Bag</p>
-        <ul class="plain">
-          <li><b>Bottom / center, near the seat:</b> tools, tire kit, toiletries — the heavy stuff, kept low and centered so it doesn't affect handling.</li>
-          <li><b>Top roll:</b> clothing — light, compressible, fine to sit higher.</li>
-          <li><b>Outer pocket:</b> rain gear, snacks, charging cable — anything you want at a gas stop without digging through the whole bag.</li>
-        </ul>
       </div>
 
     </section>
