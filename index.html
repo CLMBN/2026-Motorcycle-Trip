@@ -252,23 +252,25 @@
   .marker .d{font-size:20px;}
   .marker .lbl{font-size:8px; letter-spacing:0.08em;}
   @media (max-width:640px){
-    .day-card{padding-left:0;}
+    .day-card{padding-left:0; margin-top:24px; margin-bottom:24px;}
     .day-card:not(:last-child)::before{display:none;}
     .marker{
       position:static;
       display:inline-flex;
       width:36px; height:36px;
-      margin-bottom:10px;
+      flex-shrink:0;
     }
     .marker .d{font-size:15px;}
     .marker .lbl{font-size:6px;}
   }
 
   .day-head{margin-bottom:6px;}
+  .day-head-top{display:flex; align-items:center; gap:10px;}
   .day-date{
     font-family:'IBM Plex Mono',monospace;
     font-size:11px;
     letter-spacing:0.1em;
+    margin:0;
     text-transform:uppercase;
     color:var(--muted);
   }
@@ -831,9 +833,11 @@
 
       <!-- DAY 1 -->
       <div class="day-card">
-        <div class="marker"><span class="d">1</span><span class="lbl">FRI</span></div>
         <div class="day-head">
-          <p class="day-date"><span class="i18n-en">Friday · Sept 4 · Depart 8–9am</span><span class="i18n-es">viernes · 4 sept · salida 8–9am</span></p>
+          <div class="day-head-top">
+            <div class="marker"><span class="d">1</span><span class="lbl">FRI</span></div>
+            <p class="day-date"><span class="i18n-en">Friday · Sept 4 · Depart 8–9am</span><span class="i18n-es">viernes · 4 sept · salida 8–9am</span></p>
+          </div>
           <h2 class="day-title"><span class="i18n-en">Milford &amp; the Drive to Lincoln</span><span class="i18n-es">Milford y el Camino a Lincoln</span></h2>
           <p class="day-route-line">12 Lincoln St, Waltham → Milford, NH → Bedford, NH → Penacook Lake → Bristol, NH → <b>Rt 25 / Rt 118</b> → Lincoln, NH (Inn 32)</p>
         </div>
@@ -889,9 +893,11 @@
 
       <!-- DAY 2 -->
       <div class="day-card">
-        <div class="marker"><span class="d">2</span><span class="lbl">SAT</span></div>
         <div class="day-head">
-          <p class="day-date"><span class="i18n-en">Saturday · Sept 5 · Depart 8–9am</span><span class="i18n-es">sábado · 5 sept · salida 8–9am</span></p>
+          <div class="day-head-top">
+            <div class="marker"><span class="d">2</span><span class="lbl">SAT</span></div>
+            <p class="day-date"><span class="i18n-en">Saturday · Sept 5 · Depart 8–9am</span><span class="i18n-es">sábado · 5 sept · salida 8–9am</span></p>
+          </div>
           <h2 class="day-title"><span class="i18n-en">Kancamagus, Hurricane Mountain Rd &amp; the Maine Coast</span><span class="i18n-es">El Kancamagus, Hurricane Mountain Rd y la Costa de Maine</span></h2>
           <p class="day-route-line">Lincoln, NH → <b>Kancamagus Hwy</b> (Pemigewasset Overlook, Lower Falls) → Conway, NH → <b>Hurricane Mountain Rd</b> → Bethel, ME → Rt 26 → Brunswick, ME → Doubling Point Lighthouse → Freeport, ME</p>
         </div>
@@ -950,9 +956,11 @@
 
       <!-- DAY 3 -->
       <div class="day-card">
-        <div class="marker"><span class="d">3</span><span class="lbl">SUN</span></div>
         <div class="day-head">
-          <p class="day-date"><span class="i18n-en">Sunday · Sept 6 · Depart 8am</span><span class="i18n-es">domingo · 6 sept · salida 8am</span></p>
+          <div class="day-head-top">
+            <div class="marker"><span class="d">3</span><span class="lbl">SUN</span></div>
+            <p class="day-date"><span class="i18n-en">Sunday · Sept 6 · Depart 8am</span><span class="i18n-es">domingo · 6 sept · salida 8am</span></p>
+          </div>
           <h2 class="day-title"><span class="i18n-en">Beaches, a Castle, and a Few Last Miles</span><span class="i18n-es">Playas, un Castillo y las Últimas Millas</span></h2>
           <p class="day-route-line"><span class="i18n-en">Freeport, ME → <b>Rt 1</b> via Fortunes Rocks &amp; Goose Rocks Beach → Kennebunkport, ME → <b>Rt 1A</b> via Rye (Bass Beach) → Hampton, NH → Hammond Castle, Gloucester, MA → Salem, Lynn &amp; Revere Beach → Winthrop, MA → Waltham, MA → Grist Mill Pond, Sudbury</span><span class="i18n-es">Freeport, ME → <b>Rt 1</b> por Fortunes Rocks y Goose Rocks Beach → Kennebunkport, ME → <b>Rt 1A</b> por Rye (Bass Beach) → Hampton, NH → Hammond Castle, Gloucester, MA → Salem, Lynn y Revere Beach → Winthrop, MA → Waltham, MA → Grist Mill Pond, Sudbury</span></p>
         </div>
