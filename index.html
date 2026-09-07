@@ -106,6 +106,33 @@
     .stat .n{font-size:18px;}
   }
 
+  /* ---------- LANGUAGE TOGGLE / I18N ---------- */
+  html[data-lang="en"] .i18n-es{display:none;}
+  html[data-lang="es"] .i18n-en{display:none;}
+  .lang-toggle{
+    display:inline-flex;
+    margin-top:16px;
+    border:2px solid var(--ink);
+    border-radius:20px;
+    overflow:hidden;
+  }
+  .lang-btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.06em;
+    padding:6px 16px;
+    background:var(--paper-2);
+    color:var(--muted);
+    border:none;
+    cursor:pointer;
+  }
+  .lang-btn:first-child{border-right:2px solid var(--ink);}
+  html[data-lang="en"] .lang-btn[data-lang-btn="en"],
+  html[data-lang="es"] .lang-btn[data-lang-btn="es"]{
+    background:var(--rust);
+    color:var(--white);
+  }
+
   /* ---------- TABS ---------- */
   .tabs{
     display:flex;
@@ -642,6 +669,28 @@
   let lbGroup = [];
   let lbIndex = 0;
 
+  let currentLang = localStorage.getItem('lang') === 'es' ? 'es' : 'en';
+  document.documentElement.dataset.lang = currentLang;
+  document.documentElement.lang = currentLang;
+
+  const TITLE_EN = 'Mountains to Seacoast Loop — Sept 4–6, 2026';
+  const TITLE_ES = 'De las Montañas a la Costa — 4–6 sept, 2026';
+
+  function setLang(lang) {
+    currentLang = lang;
+    document.documentElement.dataset.lang = lang;
+    document.documentElement.lang = lang;
+    try { localStorage.setItem('lang', lang); } catch (e) {}
+    document.title = lang === 'es' ? TITLE_ES : TITLE_EN;
+    const closeBtn = document.getElementById('lightbox-close');
+    const prevBtn = document.getElementById('lightbox-prev');
+    const nextBtn = document.getElementById('lightbox-next');
+    if (closeBtn) closeBtn.setAttribute('aria-label', lang === 'es' ? 'Cerrar' : 'Close');
+    if (prevBtn) prevBtn.setAttribute('aria-label', lang === 'es' ? 'Foto anterior' : 'Previous photo');
+    if (nextBtn) nextBtn.setAttribute('aria-label', lang === 'es' ? 'Siguiente foto' : 'Next photo');
+    if (lbGroup.length) renderLightbox();
+  }
+
   function renderLightbox() {
     const btn = lbGroup[lbIndex];
     const lbImg = document.getElementById('lightbox-img');
@@ -666,8 +715,10 @@
     }
     const location = btn.dataset.location || '';
     const mapUrl = btn.dataset.map || '';
-    lbLocation.innerHTML = location + (mapUrl ? ` <a href="${mapUrl}" target="_blank" rel="noopener">📍 map</a>` : '');
-    lbDesc.textContent = btn.dataset.desc || '';
+    const mapLabel = currentLang === 'es' ? '📍 mapa' : '📍 map';
+    lbLocation.innerHTML = location + (mapUrl ? ` <a href="${mapUrl}" target="_blank" rel="noopener">${mapLabel}</a>` : '');
+    const desc = (currentLang === 'es' && btn.dataset.descEs) ? btn.dataset.descEs : (btn.dataset.desc || '');
+    lbDesc.textContent = desc;
     lbCounter.textContent = lbGroup.length > 1 ? `${lbIndex + 1} / ${lbGroup.length}` : '';
   }
 
@@ -691,6 +742,12 @@
   }
 
   document.addEventListener('click', e => {
+    const langBtn = e.target.closest('.lang-btn');
+    if (langBtn) {
+      setLang(langBtn.dataset.langBtn);
+      return;
+    }
+
     const tabBtn = e.target.closest('.tab-btn');
     if (tabBtn) {
       document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
@@ -726,97 +783,101 @@
 <div class="wrap">
 
   <header>
-    <p class="eyebrow">Motorcycle Trip Dossier</p>
-    <h1>Mountains to Seacoast Loop</h1>
-    <p class="subtitle">Waltham → White Mountains → Maine Coast → back home</p>
+    <p class="eyebrow"><span class="i18n-en">Motorcycle Trip Dossier</span><span class="i18n-es">Bitácora del Viaje en Moto</span></p>
+    <h1><span class="i18n-en">Mountains to Seacoast Loop</span><span class="i18n-es">De las Montañas a la Costa</span></h1>
+    <p class="subtitle"><span class="i18n-en">Waltham → White Mountains → Maine Coast → back home</span><span class="i18n-es">Waltham → White Mountains → la Costa de Maine → de vuelta a casa</span></p>
     <div class="stat-row">
-      <div class="stat"><span class="n">Sept 4–6</span><span class="l">2026</span></div>
-      <div class="stat"><span class="n">3 days</span><span class="l">2 nights</span></div>
-      <div class="stat"><span class="n">~533 mi</span><span class="l">backroads only</span></div>
+      <div class="stat"><span class="n">Sept 4–6</span><span class="l"><span class="i18n-en">2026</span><span class="i18n-es">4–6 sept, 2026</span></span></div>
+      <div class="stat"><span class="n"><span class="i18n-en">3 days</span><span class="i18n-es">3 días</span></span><span class="l"><span class="i18n-en">2 nights</span><span class="i18n-es">2 noches</span></span></div>
+      <div class="stat"><span class="n">~533 mi</span><span class="l"><span class="i18n-en">backroads only</span><span class="i18n-es">solo carreteras secundarias</span></span></div>
       <div class="stat"><span class="n">2×</span><span class="l">Honda Rebel</span></div>
+    </div>
+    <div class="lang-toggle">
+      <button class="lang-btn" type="button" data-lang-btn="en">EN</button>
+      <button class="lang-btn" type="button" data-lang-btn="es">ES</button>
     </div>
   </header>
 
   <div class="tabs">
-    <button class="tab-btn active" data-tab="route">Route</button>
-    <button class="tab-btn" data-tab="photos">Photos</button>
+    <button class="tab-btn active" data-tab="route"><span class="i18n-en">Route</span><span class="i18n-es">Ruta</span></button>
+    <button class="tab-btn" data-tab="photos"><span class="i18n-en">Photos</span><span class="i18n-es">Fotos</span></button>
   </div>
 
   <div class="panel-shell">
 
     <!-- ================= ROUTE PANEL ================= -->
     <section class="panel active" id="route">
-      <p class="route-intro">A three-day, ~533-mile loop from Waltham up through the White Mountains, along the Maine coast to Freeport, and back down the seacoast. The Kancamagus and Hurricane Mountain Rd carried Day 2 to the coast; Day 3 turned into a full coastal crawl — Bass Beach in Rye, Hammond Castle in Gloucester, lunch in Winthrop, a stop at Deer Island, and a final ride out to the grist mill in Sudbury. Full day-by-day breakdown below.</p>
+      <p class="route-intro"><span class="i18n-en">A three-day, ~533-mile loop from Waltham up through the White Mountains, along the Maine coast to Freeport, and back down the seacoast. The Kancamagus and Hurricane Mountain Rd carried Day 2 to the coast; Day 3 turned into a full coastal crawl — Bass Beach in Rye, Hammond Castle in Gloucester, lunch in Winthrop, a stop at Deer Island, and a final ride out to the grist mill in Sudbury. Full day-by-day breakdown below.</span><span class="i18n-es">Un recorrido de tres días y ~533 millas desde Waltham, subiendo por las White Mountains, a lo largo de la costa de Maine hasta Freeport, y de vuelta por la costa. El Kancamagus y Hurricane Mountain Rd llevaron el Día 2 hasta la costa; el Día 3 se convirtió en un recorrido costero completo — Bass Beach en Rye, el castillo Hammond en Gloucester, almuerzo en Winthrop, una parada en Deer Island, y un último tramo hasta el molino de Sudbury. El desglose completo día por día está más abajo.</span></p>
 
       <div class="stat-row" style="margin:0 0 32px;">
-        <div class="stat"><span class="n">~162 mi</span><span class="l">Day 1</span></div>
-        <div class="stat"><span class="n">~178 mi</span><span class="l">Day 2</span></div>
-        <div class="stat"><span class="n">~193 mi</span><span class="l">Day 3</span></div>
+        <div class="stat"><span class="n">~162 mi</span><span class="l"><span class="i18n-en">Day 1</span><span class="i18n-es">Día 1</span></span></div>
+        <div class="stat"><span class="n">~178 mi</span><span class="l"><span class="i18n-en">Day 2</span><span class="i18n-es">Día 2</span></span></div>
+        <div class="stat"><span class="n">~193 mi</span><span class="l"><span class="i18n-en">Day 3</span><span class="i18n-es">Día 3</span></span></div>
       </div>
 
       <div class="full-trip-cta">
-        <p class="block-label" style="justify-content:center;">Full weekend, one link</p>
-        <p>Covers all three days end to end. Use the day-by-day links below for turn-by-turn navigation.</p>
+        <p class="block-label" style="justify-content:center;"><span class="i18n-en">Full weekend, one link</span><span class="i18n-es">Todo el fin de semana, un solo enlace</span></p>
+        <p><span class="i18n-en">Covers all three days end to end. Use the day-by-day links below for turn-by-turn navigation.</span><span class="i18n-es">Cubre los tres días de principio a fin. Usa los enlaces de cada día más abajo para la navegación paso a paso.</span></p>
         <a class="route-map-link" href="https://www.google.com/maps/dir/?api=1&origin=12+Lincoln+St,+Waltham,+MA&destination=Grist+Mill+Pond,+Sudbury,+MA&waypoints=Milford,NH|Inn+32,+180+Main+St,+North+Woodstock,+NH|Kancamagus+Highway,NH|Bethel,ME|Econo+Lodge,+537+US-1,+Freeport,+ME|Coffee+Break+Cafe,+Hampton,+NH|Hammond+Castle+Museum,+Gloucester,+MA|Deer+Island,+Winthrop,+MA&travelmode=driving" target="_blank" rel="noopener">
           <img class="route-map-img" src="images/full-trip-map.jpg" loading="lazy" alt="Full weekend route map">
         </a>
-        <a class="btn secondary" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=12+Lincoln+St,+Waltham,+MA&destination=Grist+Mill+Pond,+Sudbury,+MA&waypoints=Milford,NH|Inn+32,+180+Main+St,+North+Woodstock,+NH|Kancamagus+Highway,NH|Bethel,ME|Econo+Lodge,+537+US-1,+Freeport,+ME|Coffee+Break+Cafe,+Hampton,+NH|Hammond+Castle+Museum,+Gloucester,+MA|Deer+Island,+Winthrop,+MA&travelmode=driving" style="margin-top:16px;">🗺️ Open Full Weekend Route in Google Maps ↗</a>
+        <a class="btn secondary" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=12+Lincoln+St,+Waltham,+MA&destination=Grist+Mill+Pond,+Sudbury,+MA&waypoints=Milford,NH|Inn+32,+180+Main+St,+North+Woodstock,+NH|Kancamagus+Highway,NH|Bethel,ME|Econo+Lodge,+537+US-1,+Freeport,+ME|Coffee+Break+Cafe,+Hampton,+NH|Hammond+Castle+Museum,+Gloucester,+MA|Deer+Island,+Winthrop,+MA&travelmode=driving" style="margin-top:16px;"><span class="i18n-en">🗺️ Open Full Weekend Route in Google Maps ↗</span><span class="i18n-es">🗺️ Abrir la ruta completa en Google Maps ↗</span></a>
       </div>
 
       <!-- DAY 1 -->
       <div class="day-card">
         <div class="marker"><span class="d">1</span><span class="lbl">FRI</span></div>
         <div class="day-head">
-          <p class="day-date">Friday · Sept 4 · Depart 8–9am</p>
-          <h2 class="day-title">Milford &amp; the Drive to Lincoln</h2>
+          <p class="day-date"><span class="i18n-en">Friday · Sept 4 · Depart 8–9am</span><span class="i18n-es">viernes · 4 sept · salida 8–9am</span></p>
+          <h2 class="day-title"><span class="i18n-en">Milford &amp; the Drive to Lincoln</span><span class="i18n-es">Milford y el Camino a Lincoln</span></h2>
           <p class="day-route-line">12 Lincoln St, Waltham → Milford, NH → Bedford, NH → Penacook Lake → Bristol, NH → <b>Rt 25 / Rt 118</b> → Lincoln, NH (Inn 32)</p>
         </div>
 
         <div class="route-visual">
-          <p class="route-visual-label">Route map</p>
+          <p class="route-visual-label"><span class="i18n-en">Route map</span><span class="i18n-es">Mapa de la ruta</span></p>
           <a class="route-map-link" href="https://www.google.com/maps/dir/?api=1&origin=12+Lincoln+St,+Waltham,+MA&destination=Inn+32,+180+Main+St,+North+Woodstock,+NH&waypoints=Milford,NH|137+State+Rte+101,+Bedford,+NH|Penacook+Lake,+Concord,+NH|Bristol,NH|Last+Chair+Brewery,+Plymouth,+NH|Route+118,+NH&travelmode=driving" target="_blank" rel="noopener">
           <img class="route-map-img" src="images/day1-map.jpg" loading="lazy" alt="Day 1 route map">
           </a>
         </div>
 
         <div class="map-actions">
-          <a class="btn primary-map" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=12+Lincoln+St,+Waltham,+MA&destination=Inn+32,+180+Main+St,+North+Woodstock,+NH&waypoints=Milford,NH|137+State+Rte+101,+Bedford,+NH|Penacook+Lake,+Concord,+NH|Bristol,NH|Last+Chair+Brewery,+Plymouth,+NH|Route+118,+NH&travelmode=driving">🗺️ Open Interactive Map in Google Maps ↗</a>
+          <a class="btn primary-map" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=12+Lincoln+St,+Waltham,+MA&destination=Inn+32,+180+Main+St,+North+Woodstock,+NH&waypoints=Milford,NH|137+State+Rte+101,+Bedford,+NH|Penacook+Lake,+Concord,+NH|Bristol,NH|Last+Chair+Brewery,+Plymouth,+NH|Route+118,+NH&travelmode=driving"><span class="i18n-en">🗺️ Open Interactive Map in Google Maps ↗</span><span class="i18n-es">🗺️ Abrir mapa interactivo en Google Maps ↗</span></a>
         </div>
 
         <div class="grid-2">
           <div>
-            <p class="block-label">Leg breakdown</p>
+            <p class="block-label"><span class="i18n-en">Leg breakdown</span><span class="i18n-es">Desglose de tramos</span></p>
             <ul class="stop-list">
-              <li><span class="name">Leg 1 — breakfast</span><span class="tag leg">47 mi · ~1h</span></li>
-              <li><span class="name">Leg 2 — gas, scenic stop</span><span class="tag leg">~33 mi · ~50m</span></li>
-              <li><span class="name">Leg 3 — goodbye to Justin</span><span class="tag leg">~37 mi · ~50m</span></li>
-              <li><span class="name">Leg 4 — mountain road, mandatory fill-up, overnight</span><span class="tag leg">~45 mi · ~1h15m</span></li>
+              <li><span class="name"><span class="i18n-en">Leg 1 — breakfast</span><span class="i18n-es">Tramo 1 — desayuno</span></span><span class="tag leg">47 mi · ~1h</span></li>
+              <li><span class="name"><span class="i18n-en">Leg 2 — gas, scenic stop</span><span class="i18n-es">Tramo 2 — gasolina, parada escénica</span></span><span class="tag leg">~33 mi · ~50m</span></li>
+              <li><span class="name"><span class="i18n-en">Leg 3 — goodbye to Justin</span><span class="i18n-es">Tramo 3 — despedida de Justin</span></span><span class="tag leg">~37 mi · ~50m</span></li>
+              <li><span class="name"><span class="i18n-en">Leg 4 — mountain road, mandatory fill-up, overnight</span><span class="i18n-es">Tramo 4 — carretera de montaña, llenado obligatorio, pernocte</span></span><span class="tag leg">~45 mi · ~1h15m</span></li>
             </ul>
           </div>
           <div>
-            <p class="block-label">Stops along the way</p>
+            <p class="block-label"><span class="i18n-en">Stops along the way</span><span class="i18n-es">Paradas en el camino</span></p>
             <ul class="stop-list">
-              <li><span class="name">Milford, NH</span><span class="tag food">breakfast</span></li>
-              <li><span class="name">Bedford, NH</span><span class="tag gas">gas</span></li>
-              <li><span class="name">Penacook Lake, Concord, NH</span><span class="tag scenic">photo stop</span></li>
-              <li><span class="name">Bristol, NH</span><span class="tag scenic">goodbye to Justin</span></li>
-              <li><span class="name">Inn 32, North Woodstock</span><span class="tag mandatory">fill up — mandatory</span><span class="tag stay">overnight</span></li>
+              <li><span class="name">Milford, NH</span><span class="tag food"><span class="i18n-en">breakfast</span><span class="i18n-es">desayuno</span></span></li>
+              <li><span class="name">Bedford, NH</span><span class="tag gas"><span class="i18n-en">gas</span><span class="i18n-es">gasolina</span></span></li>
+              <li><span class="name">Penacook Lake, Concord, NH</span><span class="tag scenic"><span class="i18n-en">photo stop</span><span class="i18n-es">parada para fotos</span></span></li>
+              <li><span class="name">Bristol, NH</span><span class="tag scenic"><span class="i18n-en">goodbye to Justin</span><span class="i18n-es">despedida de Justin</span></span></li>
+              <li><span class="name">Inn 32, North Woodstock</span><span class="tag mandatory"><span class="i18n-en">fill up — mandatory</span><span class="i18n-es">llenar el tanque — obligatorio</span></span><span class="tag stay"><span class="i18n-en">overnight</span><span class="i18n-es">pernocte</span></span></li>
             </ul>
           </div>
         </div>
 
         <div class="logistics-box">
-          <p class="block-label">Logistics to keep in mind</p>
+          <p class="block-label"><span class="i18n-en">Logistics to keep in mind</span><span class="i18n-es">Detalles a tener en cuenta</span></p>
           <ul class="plain">
-            <li>Stopped for the night in Lincoln, one leg short of the original plan — the Kancamagus, Conway, Hurricane Mountain Rd, and Bethel carry over to Day 2 below.</li>
-            <li>~162 miles actually ridden — Waltham → Milford → Bedford → Penacook Lake → Bristol → Rt 25/Rt 118 → Lincoln.</li>
-            <li>Stayed at <a href="https://www.inn32.com/" target="_blank" rel="noopener">Inn 32 ↗</a> — 180 Main St, North Woodstock, NH.</li>
-            <li><b>Fill up fully in Lincoln before departing tomorrow</b> — the Kancamagus has zero gas stations for 34.5 miles.</li>
+            <li><span class="i18n-en">Stopped for the night in Lincoln, one leg short of the original plan — the Kancamagus, Conway, Hurricane Mountain Rd, and Bethel carry over to Day 2 below.</span><span class="i18n-es">Nos quedamos a pasar la noche en Lincoln, un tramo antes de lo planeado — el Kancamagus, Conway, Hurricane Mountain Rd y Bethel pasan al Día 2 más abajo.</span></li>
+            <li><span class="i18n-en">~162 miles actually ridden — Waltham → Milford → Bedford → Penacook Lake → Bristol → Rt 25/Rt 118 → Lincoln.</span><span class="i18n-es">~162 millas recorridas en total — Waltham → Milford → Bedford → Penacook Lake → Bristol → Rt 25/Rt 118 → Lincoln.</span></li>
+            <li><span class="i18n-en">Stayed at <a href="https://www.inn32.com/" target="_blank" rel="noopener">Inn 32 ↗</a> — 180 Main St, North Woodstock, NH.</span><span class="i18n-es">Nos hospedamos en <a href="https://www.inn32.com/" target="_blank" rel="noopener">Inn 32 ↗</a> — 180 Main St, North Woodstock, NH.</span></li>
+            <li><span class="i18n-en"><b>Fill up fully in Lincoln before departing tomorrow</b> — the Kancamagus has zero gas stations for 34.5 miles.</span><span class="i18n-es"><b>Llena el tanque por completo en Lincoln antes de salir al día siguiente</b> — el Kancamagus no tiene gasolineras en 34.5 millas.</span></li>
           </ul>
         </div>
 
         <div class="day-gallery">
-          <p class="block-label">Photos from the road</p>
+          <p class="block-label"><span class="i18n-en">Photos from the road</span><span class="i18n-es">Fotos del camino</span></p>
           <div class="day-photos-preview" data-day="1"></div>
         </div>
       </div>
@@ -825,59 +886,59 @@
       <div class="day-card">
         <div class="marker"><span class="d">2</span><span class="lbl">SAT</span></div>
         <div class="day-head">
-          <p class="day-date">Saturday · Sept 5 · Depart 8–9am</p>
-          <h2 class="day-title">Kancamagus, Hurricane Mountain Rd &amp; the Maine Coast</h2>
+          <p class="day-date"><span class="i18n-en">Saturday · Sept 5 · Depart 8–9am</span><span class="i18n-es">sábado · 5 sept · salida 8–9am</span></p>
+          <h2 class="day-title"><span class="i18n-en">Kancamagus, Hurricane Mountain Rd &amp; the Maine Coast</span><span class="i18n-es">El Kancamagus, Hurricane Mountain Rd y la Costa de Maine</span></h2>
           <p class="day-route-line">Lincoln, NH → <b>Kancamagus Hwy</b> (Pemigewasset Overlook, Lower Falls) → Conway, NH → <b>Hurricane Mountain Rd</b> → Bethel, ME → Rt 26 → Brunswick, ME → Doubling Point Lighthouse → Freeport, ME</p>
         </div>
 
         <div class="route-visual">
-          <p class="route-visual-label">Route map</p>
+          <p class="route-visual-label"><span class="i18n-en">Route map</span><span class="i18n-es">Mapa de la ruta</span></p>
           <a class="route-map-link" href="https://www.google.com/maps/dir/?api=1&origin=Inn+32,+180+Main+St,+North+Woodstock,+NH&destination=Econo+Lodge,+537+US-1,+Freeport,+ME&waypoints=Pemigewasset+Overlook,+NH|Lower+Falls+Scenic+Area,+NH|The+Station+Bistro,+Conway,+NH|Hurricane+Mountain+Road,+Chatham,+NH|DiCocoa%27s,+Bethel,+ME|Ram+%26+Bull,+Brunswick,+ME|Doubling+Point+Lighthouse,+Arrowsic,+ME&travelmode=driving" target="_blank" rel="noopener">
           <img class="route-map-img" src="images/day2-map.jpg" loading="lazy" alt="Day 2 route map">
           </a>
         </div>
 
         <div class="map-actions">
-          <a class="btn primary-map" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=Inn+32,+180+Main+St,+North+Woodstock,+NH&destination=Econo+Lodge,+537+US-1,+Freeport,+ME&waypoints=Pemigewasset+Overlook,+NH|Lower+Falls+Scenic+Area,+NH|The+Station+Bistro,+Conway,+NH|Hurricane+Mountain+Road,+Chatham,+NH|DiCocoa%27s,+Bethel,+ME|Ram+%26+Bull,+Brunswick,+ME|Doubling+Point+Lighthouse,+Arrowsic,+ME&travelmode=driving">🗺️ Open Interactive Map in Google Maps ↗</a>
+          <a class="btn primary-map" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=Inn+32,+180+Main+St,+North+Woodstock,+NH&destination=Econo+Lodge,+537+US-1,+Freeport,+ME&waypoints=Pemigewasset+Overlook,+NH|Lower+Falls+Scenic+Area,+NH|The+Station+Bistro,+Conway,+NH|Hurricane+Mountain+Road,+Chatham,+NH|DiCocoa%27s,+Bethel,+ME|Ram+%26+Bull,+Brunswick,+ME|Doubling+Point+Lighthouse,+Arrowsic,+ME&travelmode=driving"><span class="i18n-en">🗺️ Open Interactive Map in Google Maps ↗</span><span class="i18n-es">🗺️ Abrir mapa interactivo en Google Maps ↗</span></a>
         </div>
 
         <div class="grid-2">
           <div>
-            <p class="block-label">Leg breakdown</p>
+            <p class="block-label"><span class="i18n-en">Leg breakdown</span><span class="i18n-es">Desglose de tramos</span></p>
             <ul class="stop-list">
-              <li><span class="name">Leg 1 — Kancamagus, breakfast in Conway</span><span class="tag leg">~36 mi · ~1h10m</span></li>
-              <li><span class="name">Leg 2 — Hurricane Mountain Rd to Bethel, mandatory fill-up</span><span class="tag leg">~42 mi · ~1h20m</span></li>
-              <li><span class="name">Leg 3 — Rt 26 to Brunswick, lunch</span><span class="tag leg">~63 mi · ~1h25m</span></li>
-              <li><span class="name">Leg 4 — lighthouse stop, overnight in Freeport</span><span class="tag leg">~37 mi · ~1h05m</span></li>
+              <li><span class="name"><span class="i18n-en">Leg 1 — Kancamagus, breakfast in Conway</span><span class="i18n-es">Tramo 1 — Kancamagus, desayuno en Conway</span></span><span class="tag leg">~36 mi · ~1h10m</span></li>
+              <li><span class="name"><span class="i18n-en">Leg 2 — Hurricane Mountain Rd to Bethel, mandatory fill-up</span><span class="i18n-es">Tramo 2 — Hurricane Mountain Rd hasta Bethel, llenado obligatorio</span></span><span class="tag leg">~42 mi · ~1h20m</span></li>
+              <li><span class="name"><span class="i18n-en">Leg 3 — Rt 26 to Brunswick, lunch</span><span class="i18n-es">Tramo 3 — Rt 26 hasta Brunswick, almuerzo</span></span><span class="tag leg">~63 mi · ~1h25m</span></li>
+              <li><span class="name"><span class="i18n-en">Leg 4 — lighthouse stop, overnight in Freeport</span><span class="i18n-es">Tramo 4 — parada en el faro, pernocte en Freeport</span></span><span class="tag leg">~37 mi · ~1h05m</span></li>
             </ul>
           </div>
           <div>
-            <p class="block-label">Stops along the way</p>
+            <p class="block-label"><span class="i18n-en">Stops along the way</span><span class="i18n-es">Paradas en el camino</span></p>
             <ul class="stop-list">
-              <li><span class="name">Pemigewasset Overlook, NH</span><span class="tag scenic">photo stop</span></li>
-              <li><span class="name">Lower Falls, NH</span><span class="tag scenic">photo stop</span></li>
-              <li><span class="name">The Station Bistro, Conway, NH</span><span class="tag food">breakfast</span></li>
-              <li><span class="name">Hurricane Mountain Rd</span><span class="tag scenic">scenic, narrow &amp; twisty</span></li>
-              <li><span class="name">DiCocoa's, Bethel, ME</span><span class="tag gas">gas</span><span class="tag mandatory">fill up — mandatory</span></li>
-              <li><span class="name">Ram &amp; Bull, Brunswick, ME</span><span class="tag food">lunch</span></li>
-              <li><span class="name">Doubling Point Lighthouse, Arrowsic, ME</span><span class="tag scenic">photo stop</span></li>
-              <li><span class="name">Econo Lodge, Freeport, ME</span><span class="tag stay">overnight</span></li>
+              <li><span class="name">Pemigewasset Overlook, NH</span><span class="tag scenic"><span class="i18n-en">photo stop</span><span class="i18n-es">parada para fotos</span></span></li>
+              <li><span class="name">Lower Falls, NH</span><span class="tag scenic"><span class="i18n-en">photo stop</span><span class="i18n-es">parada para fotos</span></span></li>
+              <li><span class="name">The Station Bistro, Conway, NH</span><span class="tag food"><span class="i18n-en">breakfast</span><span class="i18n-es">desayuno</span></span></li>
+              <li><span class="name">Hurricane Mountain Rd</span><span class="tag scenic"><span class="i18n-en">scenic, narrow &amp; twisty</span><span class="i18n-es">escénico, angosto y sinuoso</span></span></li>
+              <li><span class="name">DiCocoa's, Bethel, ME</span><span class="tag gas"><span class="i18n-en">gas</span><span class="i18n-es">gasolina</span></span><span class="tag mandatory"><span class="i18n-en">fill up — mandatory</span><span class="i18n-es">llenar el tanque — obligatorio</span></span></li>
+              <li><span class="name">Ram &amp; Bull, Brunswick, ME</span><span class="tag food"><span class="i18n-en">lunch</span><span class="i18n-es">almuerzo</span></span></li>
+              <li><span class="name">Doubling Point Lighthouse, Arrowsic, ME</span><span class="tag scenic"><span class="i18n-en">photo stop</span><span class="i18n-es">parada para fotos</span></span></li>
+              <li><span class="name">Econo Lodge, Freeport, ME</span><span class="tag stay"><span class="i18n-en">overnight</span><span class="i18n-es">pernocte</span></span></li>
             </ul>
           </div>
         </div>
 
         <div class="logistics-box">
-          <p class="block-label">Logistics to keep in mind</p>
+          <p class="block-label"><span class="i18n-en">Logistics to keep in mind</span><span class="i18n-es">Detalles a tener en cuenta</span></p>
           <ul class="plain">
-            <li>~178 miles actually ridden — Lincoln → Kancamagus (Pemigewasset Overlook, Lower Falls) → Conway → Hurricane Mountain Rd → Bethel → Rt 26 → Brunswick → Doubling Point Lighthouse → Freeport.</li>
-            <li>Stayed at <a href="https://www.choicehotels.com/maine/freeport/econo-lodge-hotels/me050" target="_blank" rel="noopener">Econo Lodge ↗</a> — 537 US-1, Freeport, ME.</li>
-            <li>Filled up in Bethel at DiCocoa's before the long Rt 26 stretch to Brunswick.</li>
-            <li><b>Hurricane Mountain Road</b> was paved but narrow, patchy, and twisty with real elevation change.</li>
+            <li><span class="i18n-en">~178 miles actually ridden — Lincoln → Kancamagus (Pemigewasset Overlook, Lower Falls) → Conway → Hurricane Mountain Rd → Bethel → Rt 26 → Brunswick → Doubling Point Lighthouse → Freeport.</span><span class="i18n-es">~178 millas recorridas en total — Lincoln → Kancamagus (Pemigewasset Overlook, Lower Falls) → Conway → Hurricane Mountain Rd → Bethel → Rt 26 → Brunswick → Doubling Point Lighthouse → Freeport.</span></li>
+            <li><span class="i18n-en">Stayed at <a href="https://www.choicehotels.com/maine/freeport/econo-lodge-hotels/me050" target="_blank" rel="noopener">Econo Lodge ↗</a> — 537 US-1, Freeport, ME.</span><span class="i18n-es">Nos hospedamos en <a href="https://www.choicehotels.com/maine/freeport/econo-lodge-hotels/me050" target="_blank" rel="noopener">Econo Lodge ↗</a> — 537 US-1, Freeport, ME.</span></li>
+            <li><span class="i18n-en">Filled up in Bethel at DiCocoa's before the long Rt 26 stretch to Brunswick.</span><span class="i18n-es">Llenamos el tanque en Bethel, en DiCocoa's, antes del largo tramo por la Rt 26 hasta Brunswick.</span></li>
+            <li><span class="i18n-en"><b>Hurricane Mountain Road</b> was paved but narrow, patchy, and twisty with real elevation change.</span><span class="i18n-es"><b>Hurricane Mountain Road</b> estaba pavimentada, pero era angosta, con baches y muy sinuosa, con cambios de elevación considerables.</span></li>
           </ul>
         </div>
 
         <div class="day-gallery">
-          <p class="block-label">Photos from the road</p>
+          <p class="block-label"><span class="i18n-en">Photos from the road</span><span class="i18n-es">Fotos del camino</span></p>
           <div class="day-photos-preview" data-day="2"></div>
         </div>
       </div>
@@ -886,63 +947,63 @@
       <div class="day-card">
         <div class="marker"><span class="d">3</span><span class="lbl">SUN</span></div>
         <div class="day-head">
-          <p class="day-date">Sunday · Sept 6 · Depart 8am</p>
-          <h2 class="day-title">Beaches, a Castle, and a Few Last Miles</h2>
-          <p class="day-route-line">Freeport, ME → <b>Rt 1</b> via Fortunes Rocks &amp; Goose Rocks Beach → Kennebunkport, ME → <b>Rt 1A</b> via Rye (Bass Beach) → Hampton, NH → Hammond Castle, Gloucester, MA → Salem, Lynn &amp; Revere Beach → Winthrop, MA → Waltham, MA → Grist Mill Pond, Sudbury</p>
+          <p class="day-date"><span class="i18n-en">Sunday · Sept 6 · Depart 8am</span><span class="i18n-es">domingo · 6 sept · salida 8am</span></p>
+          <h2 class="day-title"><span class="i18n-en">Beaches, a Castle, and a Few Last Miles</span><span class="i18n-es">Playas, un Castillo y las Últimas Millas</span></h2>
+          <p class="day-route-line"><span class="i18n-en">Freeport, ME → <b>Rt 1</b> via Fortunes Rocks &amp; Goose Rocks Beach → Kennebunkport, ME → <b>Rt 1A</b> via Rye (Bass Beach) → Hampton, NH → Hammond Castle, Gloucester, MA → Salem, Lynn &amp; Revere Beach → Winthrop, MA → Waltham, MA → Grist Mill Pond, Sudbury</span><span class="i18n-es">Freeport, ME → <b>Rt 1</b> por Fortunes Rocks y Goose Rocks Beach → Kennebunkport, ME → <b>Rt 1A</b> por Rye (Bass Beach) → Hampton, NH → Hammond Castle, Gloucester, MA → Salem, Lynn y Revere Beach → Winthrop, MA → Waltham, MA → Grist Mill Pond, Sudbury</span></p>
         </div>
 
         <div class="route-visual">
-          <p class="route-visual-label">Route map</p>
+          <p class="route-visual-label"><span class="i18n-en">Route map</span><span class="i18n-es">Mapa de la ruta</span></p>
           <a class="route-map-link" href="https://www.google.com/maps/dir/?api=1&origin=Econo+Lodge,+537+US-1,+Freeport,+ME&destination=Grist+Mill+Pond,+Sudbury,+MA&waypoints=Fortunes+Rocks+Beach,+Biddeford,+ME|Goose+Rocks+Beach,+Kennebunkport,+ME|Rye,NH|Bass+Beach,+Rye,+NH|Coffee+Break+Cafe,+Hampton,+NH|Hammond+Castle+Museum,+Gloucester,+MA|Revere+Beach,MA|La+Esquina+Del+Sabor,+Winthrop,+MA|Deer+Island,+Winthrop,+MA|12+Lincoln+St,+Waltham,+MA&travelmode=driving" target="_blank" rel="noopener">
           <img class="route-map-img" src="images/day3-map.jpg" loading="lazy" alt="Day 3 route map">
           </a>
         </div>
 
         <div class="map-actions">
-          <a class="btn primary-map" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=Econo+Lodge,+537+US-1,+Freeport,+ME&destination=Grist+Mill+Pond,+Sudbury,+MA&waypoints=Fortunes+Rocks+Beach,+Biddeford,+ME|Goose+Rocks+Beach,+Kennebunkport,+ME|Rye,NH|Bass+Beach,+Rye,+NH|Coffee+Break+Cafe,+Hampton,+NH|Hammond+Castle+Museum,+Gloucester,+MA|Revere+Beach,MA|La+Esquina+Del+Sabor,+Winthrop,+MA|Deer+Island,+Winthrop,+MA|12+Lincoln+St,+Waltham,+MA&travelmode=driving">🗺️ Open Interactive Map in Google Maps ↗</a>
+          <a class="btn primary-map" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&origin=Econo+Lodge,+537+US-1,+Freeport,+ME&destination=Grist+Mill+Pond,+Sudbury,+MA&waypoints=Fortunes+Rocks+Beach,+Biddeford,+ME|Goose+Rocks+Beach,+Kennebunkport,+ME|Rye,NH|Bass+Beach,+Rye,+NH|Coffee+Break+Cafe,+Hampton,+NH|Hammond+Castle+Museum,+Gloucester,+MA|Revere+Beach,MA|La+Esquina+Del+Sabor,+Winthrop,+MA|Deer+Island,+Winthrop,+MA|12+Lincoln+St,+Waltham,+MA&travelmode=driving"><span class="i18n-en">🗺️ Open Interactive Map in Google Maps ↗</span><span class="i18n-es">🗺️ Abrir mapa interactivo en Google Maps ↗</span></a>
         </div>
 
         <div class="grid-2">
           <div>
-            <p class="block-label">Leg breakdown</p>
+            <p class="block-label"><span class="i18n-en">Leg breakdown</span><span class="i18n-es">Desglose de tramos</span></p>
             <ul class="stop-list">
-              <li><span class="name">Leg 1 — Rt 1 to Kennebunkport</span><span class="tag leg">~50 mi · ~1h15m</span></li>
-              <li><span class="name">Leg 2 — Rt 1A to Hampton, breakfast</span><span class="tag leg">~38 mi · ~1h10m</span></li>
-              <li><span class="name">Leg 3 — Hammond Castle Museum, Gloucester</span><span class="tag leg">~45 mi · ~1h</span></li>
-              <li><span class="name">Leg 4 — Salem/Lynn/Revere to Winthrop, lunch</span><span class="tag leg">~31 mi · ~1h</span></li>
-              <li><span class="name">Leg 5 — home, then Grist Mill Pond</span><span class="tag leg">~29 mi · ~50m</span></li>
+              <li><span class="name"><span class="i18n-en">Leg 1 — Rt 1 to Kennebunkport</span><span class="i18n-es">Tramo 1 — Rt 1 hasta Kennebunkport</span></span><span class="tag leg">~50 mi · ~1h15m</span></li>
+              <li><span class="name"><span class="i18n-en">Leg 2 — Rt 1A to Hampton, breakfast</span><span class="i18n-es">Tramo 2 — Rt 1A hasta Hampton, desayuno</span></span><span class="tag leg">~38 mi · ~1h10m</span></li>
+              <li><span class="name"><span class="i18n-en">Leg 3 — Hammond Castle Museum, Gloucester</span><span class="i18n-es">Tramo 3 — Hammond Castle Museum, Gloucester</span></span><span class="tag leg">~45 mi · ~1h</span></li>
+              <li><span class="name"><span class="i18n-en">Leg 4 — Salem/Lynn/Revere to Winthrop, lunch</span><span class="i18n-es">Tramo 4 — Salem/Lynn/Revere hasta Winthrop, almuerzo</span></span><span class="tag leg">~31 mi · ~1h</span></li>
+              <li><span class="name"><span class="i18n-en">Leg 5 — home, then Grist Mill Pond</span><span class="i18n-es">Tramo 5 — a casa, luego Grist Mill Pond</span></span><span class="tag leg">~29 mi · ~50m</span></li>
             </ul>
           </div>
           <div>
-            <p class="block-label">Stops along the way</p>
+            <p class="block-label"><span class="i18n-en">Stops along the way</span><span class="i18n-es">Paradas en el camino</span></p>
             <ul class="stop-list">
-              <li><span class="name">Fortunes Rocks Beach, Biddeford, ME</span><span class="tag scenic">photo stop</span></li>
-              <li><span class="name">Goose Rocks Beach, Kennebunkport, ME</span><span class="tag scenic">photo stop</span></li>
+              <li><span class="name">Fortunes Rocks Beach, Biddeford, ME</span><span class="tag scenic"><span class="i18n-en">photo stop</span><span class="i18n-es">parada para fotos</span></span></li>
+              <li><span class="name">Goose Rocks Beach, Kennebunkport, ME</span><span class="tag scenic"><span class="i18n-en">photo stop</span><span class="i18n-es">parada para fotos</span></span></li>
               <li><span class="name">Rye, NH</span><span class="tag scenic">Rt 1A</span></li>
-              <li><span class="name">Bass Beach, Rye, NH</span><span class="tag scenic">photo stop</span></li>
-              <li><span class="name">Coffee Break Cafe, Hampton, NH</span><span class="tag food">breakfast</span></li>
-              <li><span class="name">Hammond Castle Museum, Gloucester, MA</span><span class="tag scenic">sightseeing</span></li>
-              <li><span class="name">Revere Beach, MA</span><span class="tag scenic">photo stop</span></li>
-              <li><span class="name">La Esquina Del Sabor, Winthrop, MA</span><span class="tag food">lunch</span></li>
-              <li><span class="name">Deer Island, Winthrop, MA</span><span class="tag scenic">photo stop</span></li>
-              <li><span class="name">12 Lincoln St, Waltham</span><span class="tag stay">arrival home</span></li>
-              <li><span class="name">Grist Mill Pond, Sudbury, MA</span><span class="tag scenic">final drive</span></li>
+              <li><span class="name">Bass Beach, Rye, NH</span><span class="tag scenic"><span class="i18n-en">photo stop</span><span class="i18n-es">parada para fotos</span></span></li>
+              <li><span class="name">Coffee Break Cafe, Hampton, NH</span><span class="tag food"><span class="i18n-en">breakfast</span><span class="i18n-es">desayuno</span></span></li>
+              <li><span class="name">Hammond Castle Museum, Gloucester, MA</span><span class="tag scenic"><span class="i18n-en">sightseeing</span><span class="i18n-es">turismo</span></span></li>
+              <li><span class="name">Revere Beach, MA</span><span class="tag scenic"><span class="i18n-en">photo stop</span><span class="i18n-es">parada para fotos</span></span></li>
+              <li><span class="name">La Esquina Del Sabor, Winthrop, MA</span><span class="tag food"><span class="i18n-en">lunch</span><span class="i18n-es">almuerzo</span></span></li>
+              <li><span class="name">Deer Island, Winthrop, MA</span><span class="tag scenic"><span class="i18n-en">photo stop</span><span class="i18n-es">parada para fotos</span></span></li>
+              <li><span class="name">12 Lincoln St, Waltham</span><span class="tag stay"><span class="i18n-en">arrival home</span><span class="i18n-es">llegada a casa</span></span></li>
+              <li><span class="name">Grist Mill Pond, Sudbury, MA</span><span class="tag scenic"><span class="i18n-en">final drive</span><span class="i18n-es">último tramo</span></span></li>
             </ul>
           </div>
         </div>
 
         <div class="logistics-box">
-          <p class="block-label">Logistics to keep in mind</p>
+          <p class="block-label"><span class="i18n-en">Logistics to keep in mind</span><span class="i18n-es">Detalles a tener en cuenta</span></p>
           <ul class="plain">
-            <li>Turned into a full coastal crawl rather than the planned 3 quick Rt 1A dips — Fortunes Rocks Beach, Goose Rocks Beach, then Rt 1A through Rye (Bass Beach), on to Hammond Castle, Salem, Lynn, Revere Beach, and Deer Island.</li>
-            <li>~193 miles actually ridden — well over the ~126 mi plan, but stayed on schedule since the extra stops were quick photo stops rather than long detours.</li>
-            <li>Breakfast at Coffee Break Cafe in Hampton, NH; lunch at La Esquina Del Sabor in Winthrop, MA.</li>
-            <li>After getting home to Waltham, capped off the trip with one more short ride out to Grist Mill Pond in Sudbury.</li>
+            <li><span class="i18n-en">Turned into a full coastal crawl rather than the planned 3 quick Rt 1A dips — Fortunes Rocks Beach, Goose Rocks Beach, then Rt 1A through Rye (Bass Beach), on to Hammond Castle, Salem, Lynn, Revere Beach, and Deer Island.</span><span class="i18n-es">Se convirtió en un recorrido costero completo en lugar de las 3 paradas rápidas planeadas en la Rt 1A — Fortunes Rocks Beach, Goose Rocks Beach, luego la Rt 1A por Rye (Bass Beach), y de ahí a Hammond Castle, Salem, Lynn, Revere Beach y Deer Island.</span></li>
+            <li><span class="i18n-en">~193 miles actually ridden — well over the ~126 mi plan, but stayed on schedule since the extra stops were quick photo stops rather than long detours.</span><span class="i18n-es">~193 millas recorridas en total — muy por encima de las ~126 mi planeadas, pero se mantuvo el horario porque las paradas extra fueron rápidas paradas para fotos y no grandes desvíos.</span></li>
+            <li><span class="i18n-en">Breakfast at Coffee Break Cafe in Hampton, NH; lunch at La Esquina Del Sabor in Winthrop, MA.</span><span class="i18n-es">Desayuno en Coffee Break Cafe en Hampton, NH; almuerzo en La Esquina Del Sabor en Winthrop, MA.</span></li>
+            <li><span class="i18n-en">After getting home to Waltham, capped off the trip with one more short ride out to Grist Mill Pond in Sudbury.</span><span class="i18n-es">Después de llegar a casa en Waltham, cerramos el viaje con un último y corto paseo hasta Grist Mill Pond en Sudbury.</span></li>
           </ul>
         </div>
 
         <div class="day-gallery">
-          <p class="block-label">Photos from the road</p>
+          <p class="block-label"><span class="i18n-en">Photos from the road</span><span class="i18n-es">Fotos del camino</span></p>
           <div class="day-photos-preview" data-day="3"></div>
         </div>
       </div>
@@ -950,29 +1011,29 @@
     </section>
 
     <section class="panel" id="photos">
-      <p class="route-intro">Every photo from the trip, in one place. Tap any thumbnail to see it full screen.</p>
+      <p class="route-intro"><span class="i18n-en">Every photo from the trip, in one place. Tap any thumbnail to see it full screen.</span><span class="i18n-es">Todas las fotos del viaje, en un solo lugar. Toca cualquier miniatura para verla en pantalla completa.</span></p>
 
       <div class="day-gallery">
-        <p class="block-label">Day 1 — Friday, Sept 4</p>
+        <p class="block-label"><span class="i18n-en">Day 1 — Friday, Sept 4</span><span class="i18n-es">Día 1 — viernes, 4 de sept</span></p>
           <div class="stop-gallery">
             <p class="stop-gallery-label">John's House, Waltham, MA</p>
             <div class="gallery-grid">
-            <button class="gallery-thumb" data-location="John's House, Waltham, MA" data-desc="Loading up before the 8:30am departure" data-map="https://www.google.com/maps?q=12+Lincoln+St,+Waltham,+MA">
+            <button class="gallery-thumb" data-location="John's House, Waltham, MA" data-desc="Loading up before the 8:30am departure" data-desc-es="Cargando el equipaje antes de salir a las 8:30am" data-map="https://www.google.com/maps?q=12+Lincoln+St,+Waltham,+MA">
               <img src="images/john-s-house-waltham-ma-1.jpg" loading="lazy" alt="John's House, Waltham, MA">
             </button>
-            <button class="gallery-thumb" data-location="John's House, Waltham, MA" data-desc="Loading up before the 8:30am departure" data-map="https://www.google.com/maps?q=12+Lincoln+St,+Waltham,+MA">
+            <button class="gallery-thumb" data-location="John's House, Waltham, MA" data-desc="Loading up before the 8:30am departure" data-desc-es="Cargando el equipaje antes de salir a las 8:30am" data-map="https://www.google.com/maps?q=12+Lincoln+St,+Waltham,+MA">
               <img src="images/john-s-house-waltham-ma-2.jpg" loading="lazy" alt="John's House, Waltham, MA">
             </button>
-            <button class="gallery-thumb" data-location="John's House, Waltham, MA" data-desc="Loading up before the 8:30am departure" data-map="https://www.google.com/maps?q=12+Lincoln+St,+Waltham,+MA">
+            <button class="gallery-thumb" data-location="John's House, Waltham, MA" data-desc="Loading up before the 8:30am departure" data-desc-es="Cargando el equipaje antes de salir a las 8:30am" data-map="https://www.google.com/maps?q=12+Lincoln+St,+Waltham,+MA">
               <img src="images/john-s-house-waltham-ma-3.jpg" loading="lazy" alt="John's House, Waltham, MA">
             </button>
-            <button class="gallery-thumb" data-location="John's House, Waltham, MA" data-desc="Loading up before the 8:30am departure" data-map="https://www.google.com/maps?q=12+Lincoln+St,+Waltham,+MA">
+            <button class="gallery-thumb" data-location="John's House, Waltham, MA" data-desc="Loading up before the 8:30am departure" data-desc-es="Cargando el equipaje antes de salir a las 8:30am" data-map="https://www.google.com/maps?q=12+Lincoln+St,+Waltham,+MA">
               <img src="images/john-s-house-waltham-ma-4.jpg" loading="lazy" alt="John's House, Waltham, MA">
             </button>
-            <button class="gallery-thumb" data-location="John's House, Waltham, MA" data-desc="Loading up before the 8:30am departure" data-map="https://www.google.com/maps?q=12+Lincoln+St,+Waltham,+MA">
+            <button class="gallery-thumb" data-location="John's House, Waltham, MA" data-desc="Loading up before the 8:30am departure" data-desc-es="Cargando el equipaje antes de salir a las 8:30am" data-map="https://www.google.com/maps?q=12+Lincoln+St,+Waltham,+MA">
               <img src="images/john-s-house-waltham-ma-5.jpg" loading="lazy" alt="John's House, Waltham, MA">
             </button>
-            <button class="gallery-thumb" data-location="John's House, Waltham, MA" data-desc="Loading up before the 8:30am departure" data-map="https://www.google.com/maps?q=12+Lincoln+St,+Waltham,+MA">
+            <button class="gallery-thumb" data-location="John's House, Waltham, MA" data-desc="Loading up before the 8:30am departure" data-desc-es="Cargando el equipaje antes de salir a las 8:30am" data-map="https://www.google.com/maps?q=12+Lincoln+St,+Waltham,+MA">
               <img src="images/john-s-house-waltham-ma-6.jpg" loading="lazy" alt="John's House, Waltham, MA">
             </button>
             </div>
@@ -980,7 +1041,7 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">The Riverhouse Cafe, Milford, NH</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="The Riverhouse Cafe, Milford, NH" data-desc="Breakfast with Justin" data-map="https://www.google.com/maps?q=Riverhouse+Cafe+Milford+NH">
+              <button class="gallery-thumb" data-location="The Riverhouse Cafe, Milford, NH" data-desc="Breakfast with Justin" data-desc-es="Desayuno con Justin" data-map="https://www.google.com/maps?q=Riverhouse+Cafe+Milford+NH">
                 <img src="images/the-riverhouse-cafe-milford-nh-1.jpg" loading="lazy" alt="The Riverhouse Cafe, Milford, NH">
               </button>
             </div>
@@ -988,13 +1049,13 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">Mobil, Bedford, NH</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Mobil, Bedford, NH" data-desc="Gas stop and a phone call" data-map="https://www.google.com/maps?q=137+State+Rte+101,+Bedford,+NH+03110">
+              <button class="gallery-thumb" data-location="Mobil, Bedford, NH" data-desc="Gas stop and a phone call" data-desc-es="Parada para gasolina y una llamada" data-map="https://www.google.com/maps?q=137+State+Rte+101,+Bedford,+NH+03110">
                 <img src="images/mobil-bedford-nh-1.jpg" loading="lazy" alt="Mobil, Bedford, NH">
               </button>
-              <button class="gallery-thumb" data-location="Mobil, Bedford, NH" data-desc="Gas stop and a phone call" data-map="https://www.google.com/maps?q=137+State+Rte+101,+Bedford,+NH+03110">
+              <button class="gallery-thumb" data-location="Mobil, Bedford, NH" data-desc="Gas stop and a phone call" data-desc-es="Parada para gasolina y una llamada" data-map="https://www.google.com/maps?q=137+State+Rte+101,+Bedford,+NH+03110">
                 <img src="images/mobil-bedford-nh-2.jpg" loading="lazy" alt="Mobil, Bedford, NH">
               </button>
-              <button class="gallery-thumb" data-location="Mobil, Bedford, NH" data-desc="Gas stop and a phone call" data-map="https://www.google.com/maps?q=137+State+Rte+101,+Bedford,+NH+03110">
+              <button class="gallery-thumb" data-location="Mobil, Bedford, NH" data-desc="Gas stop and a phone call" data-desc-es="Parada para gasolina y una llamada" data-map="https://www.google.com/maps?q=137+State+Rte+101,+Bedford,+NH+03110">
                 <img src="images/mobil-bedford-nh-3.jpg" loading="lazy" alt="Mobil, Bedford, NH">
               </button>
             </div>
@@ -1002,25 +1063,25 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">Penacook Lake, Concord, NH</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Penacook Lake, Concord, NH" data-desc="Photo stop for a great lake view" data-map="https://www.google.com/maps?q=43.215215,-71.595669">
+              <button class="gallery-thumb" data-location="Penacook Lake, Concord, NH" data-desc="Photo stop for a great lake view" data-desc-es="Parada para fotos con una gran vista del lago" data-map="https://www.google.com/maps?q=43.215215,-71.595669">
                 <img src="images/penacook-lake-concord-nh-1.jpg" loading="lazy" alt="Penacook Lake, Concord, NH">
               </button>
-              <button class="gallery-thumb" data-location="Penacook Lake, Concord, NH" data-desc="Photo stop for a great lake view" data-map="https://www.google.com/maps?q=43.215215,-71.595669">
+              <button class="gallery-thumb" data-location="Penacook Lake, Concord, NH" data-desc="Photo stop for a great lake view" data-desc-es="Parada para fotos con una gran vista del lago" data-map="https://www.google.com/maps?q=43.215215,-71.595669">
                 <img src="images/penacook-lake-concord-nh-2.jpg" loading="lazy" alt="Penacook Lake, Concord, NH">
               </button>
-              <button class="gallery-thumb" data-location="Penacook Lake, Concord, NH" data-desc="Photo stop for a great lake view" data-map="https://www.google.com/maps?q=43.215215,-71.595669">
+              <button class="gallery-thumb" data-location="Penacook Lake, Concord, NH" data-desc="Photo stop for a great lake view" data-desc-es="Parada para fotos con una gran vista del lago" data-map="https://www.google.com/maps?q=43.215215,-71.595669">
                 <img src="images/penacook-lake-concord-nh-3.jpg" loading="lazy" alt="Penacook Lake, Concord, NH">
               </button>
-              <button class="gallery-thumb" data-location="Penacook Lake, Concord, NH" data-desc="Photo stop for a great lake view" data-map="https://www.google.com/maps?q=43.215215,-71.595669">
+              <button class="gallery-thumb" data-location="Penacook Lake, Concord, NH" data-desc="Photo stop for a great lake view" data-desc-es="Parada para fotos con una gran vista del lago" data-map="https://www.google.com/maps?q=43.215215,-71.595669">
                 <img src="images/penacook-lake-concord-nh-4.jpg" loading="lazy" alt="Penacook Lake, Concord, NH">
               </button>
-              <button class="gallery-thumb" data-location="Penacook Lake, Concord, NH" data-desc="Photo stop for a great lake view" data-map="https://www.google.com/maps?q=43.215215,-71.595669">
+              <button class="gallery-thumb" data-location="Penacook Lake, Concord, NH" data-desc="Photo stop for a great lake view" data-desc-es="Parada para fotos con una gran vista del lago" data-map="https://www.google.com/maps?q=43.215215,-71.595669">
                 <img src="images/penacook-lake-concord-nh-5.jpg" loading="lazy" alt="Penacook Lake, Concord, NH">
               </button>
-              <button class="gallery-thumb" data-location="Penacook Lake, Concord, NH" data-desc="Photo stop for a great lake view" data-map="https://www.google.com/maps?q=43.215215,-71.595669">
+              <button class="gallery-thumb" data-location="Penacook Lake, Concord, NH" data-desc="Photo stop for a great lake view" data-desc-es="Parada para fotos con una gran vista del lago" data-map="https://www.google.com/maps?q=43.215215,-71.595669">
                 <img src="images/penacook-lake-concord-nh-6.jpg" loading="lazy" alt="Penacook Lake, Concord, NH">
               </button>
-              <button class="gallery-thumb" data-location="Penacook Lake, Concord, NH" data-desc="Photo stop for a great lake view" data-map="https://www.google.com/maps?q=43.215215,-71.595669">
+              <button class="gallery-thumb" data-location="Penacook Lake, Concord, NH" data-desc="Photo stop for a great lake view" data-desc-es="Parada para fotos con una gran vista del lago" data-map="https://www.google.com/maps?q=43.215215,-71.595669">
                 <img src="images/penacook-lake-concord-nh-7.jpg" loading="lazy" alt="Penacook Lake, Concord, NH">
               </button>
             </div>
@@ -1029,13 +1090,13 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">Bristol, NH</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Bristol, NH" data-desc="Saying goodbye to Justin" data-map="https://www.google.com/maps?q=43.591385,-71.736594">
+              <button class="gallery-thumb" data-location="Bristol, NH" data-desc="Saying goodbye to Justin" data-desc-es="Despidiéndonos de Justin" data-map="https://www.google.com/maps?q=43.591385,-71.736594">
                 <img src="images/bristol-nh-1.jpg" loading="lazy" alt="Bristol, NH">
               </button>
-              <button class="gallery-thumb" data-location="Bristol, NH" data-desc="Saying goodbye to Justin" data-map="https://www.google.com/maps?q=43.591385,-71.736594">
+              <button class="gallery-thumb" data-location="Bristol, NH" data-desc="Saying goodbye to Justin" data-desc-es="Despidiéndonos de Justin" data-map="https://www.google.com/maps?q=43.591385,-71.736594">
                 <img src="images/bristol-nh-2.jpg" loading="lazy" alt="Bristol, NH">
               </button>
-              <button class="gallery-thumb" data-location="Bristol, NH" data-desc="Saying goodbye to Justin" data-map="https://www.google.com/maps?q=43.591385,-71.736594">
+              <button class="gallery-thumb" data-location="Bristol, NH" data-desc="Saying goodbye to Justin" data-desc-es="Despidiéndonos de Justin" data-map="https://www.google.com/maps?q=43.591385,-71.736594">
                 <img src="images/bristol-nh-3.jpg" loading="lazy" alt="Bristol, NH">
               </button>
             </div>
@@ -1044,19 +1105,19 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">Inn 32, North Woodstock, NH</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Inn 32, North Woodstock, NH" data-desc="Fire pit with music and lights" data-map="https://www.google.com/maps?q=Inn+32,+180+Main+St,+North+Woodstock,+NH">
+              <button class="gallery-thumb" data-location="Inn 32, North Woodstock, NH" data-desc="Fire pit with music and lights" data-desc-es="Fogata con música y luces" data-map="https://www.google.com/maps?q=Inn+32,+180+Main+St,+North+Woodstock,+NH">
                 <img src="images/inn-32-north-woodstock-nh-1.jpg" loading="lazy" alt="Inn 32, North Woodstock, NH">
               </button>
-              <button class="gallery-thumb" data-location="Inn 32, North Woodstock, NH" data-desc="Fire pit with music and lights" data-map="https://www.google.com/maps?q=Inn+32,+180+Main+St,+North+Woodstock,+NH">
+              <button class="gallery-thumb" data-location="Inn 32, North Woodstock, NH" data-desc="Fire pit with music and lights" data-desc-es="Fogata con música y luces" data-map="https://www.google.com/maps?q=Inn+32,+180+Main+St,+North+Woodstock,+NH">
                 <img src="images/inn-32-north-woodstock-nh-2.jpg" loading="lazy" alt="Inn 32, North Woodstock, NH">
               </button>
-              <button class="gallery-thumb" data-location="Inn 32, North Woodstock, NH" data-desc="Fire pit with music and lights" data-map="https://www.google.com/maps?q=Inn+32,+180+Main+St,+North+Woodstock,+NH">
+              <button class="gallery-thumb" data-location="Inn 32, North Woodstock, NH" data-desc="Fire pit with music and lights" data-desc-es="Fogata con música y luces" data-map="https://www.google.com/maps?q=Inn+32,+180+Main+St,+North+Woodstock,+NH">
                 <img src="images/inn-32-north-woodstock-nh-3.jpg" loading="lazy" alt="Inn 32, North Woodstock, NH">
               </button>
-              <button class="gallery-thumb" data-location="Inn 32, North Woodstock, NH" data-desc="Fire pit with music and lights" data-map="https://www.google.com/maps?q=Inn+32,+180+Main+St,+North+Woodstock,+NH">
+              <button class="gallery-thumb" data-location="Inn 32, North Woodstock, NH" data-desc="Fire pit with music and lights" data-desc-es="Fogata con música y luces" data-map="https://www.google.com/maps?q=Inn+32,+180+Main+St,+North+Woodstock,+NH">
                 <img src="images/inn-32-north-woodstock-nh-4.jpg" loading="lazy" alt="Inn 32, North Woodstock, NH">
               </button>
-              <button class="gallery-thumb" data-location="Inn 32, North Woodstock, NH" data-desc="Fire pit with music and lights" data-map="https://www.google.com/maps?q=Inn+32,+180+Main+St,+North+Woodstock,+NH">
+              <button class="gallery-thumb" data-location="Inn 32, North Woodstock, NH" data-desc="Fire pit with music and lights" data-desc-es="Fogata con música y luces" data-map="https://www.google.com/maps?q=Inn+32,+180+Main+St,+North+Woodstock,+NH">
                 <img src="images/inn-32-north-woodstock-nh-5.jpg" loading="lazy" alt="Inn 32, North Woodstock, NH">
                 <video preload="none" playsinline muted hidden>
                   <source src="videos/inn32-firepit-1.mp4" type="video/mp4">
@@ -1068,17 +1129,17 @@
       </div>
 
       <div class="day-gallery">
-        <p class="block-label">Day 2 — Saturday, Sept 5</p>
+        <p class="block-label"><span class="i18n-en">Day 2 — Saturday, Sept 5</span><span class="i18n-es">Día 2 — sábado, 5 de sept</span></p>
           <div class="stop-gallery">
             <p class="stop-gallery-label">Pemigewasset Overlook, Kancamagus Hwy, NH</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Pemigewasset Overlook, Kancamagus Hwy, NH" data-desc="6:30am start on the Kancamagus — mountain view at Pemigewasset Overlook" data-map="https://www.google.com/maps?q=Pemigewasset+Overlook,+NH">
+              <button class="gallery-thumb" data-location="Pemigewasset Overlook, Kancamagus Hwy, NH" data-desc="6:30am start on the Kancamagus — mountain view at Pemigewasset Overlook" data-desc-es="Salida a las 6:30am por el Kancamagus — vista de montaña en Pemigewasset Overlook" data-map="https://www.google.com/maps?q=Pemigewasset+Overlook,+NH">
                 <img src="images/pemigewasset-overlook-kancamagus-hwy-nh-1.jpg" loading="lazy" alt="Pemigewasset Overlook, Kancamagus Hwy, NH">
               </button>
-              <button class="gallery-thumb" data-location="Pemigewasset Overlook, Kancamagus Hwy, NH" data-desc="6:30am start on the Kancamagus — mountain view at Pemigewasset Overlook" data-map="https://www.google.com/maps?q=Pemigewasset+Overlook,+NH">
+              <button class="gallery-thumb" data-location="Pemigewasset Overlook, Kancamagus Hwy, NH" data-desc="6:30am start on the Kancamagus — mountain view at Pemigewasset Overlook" data-desc-es="Salida a las 6:30am por el Kancamagus — vista de montaña en Pemigewasset Overlook" data-map="https://www.google.com/maps?q=Pemigewasset+Overlook,+NH">
                 <img src="images/pemigewasset-overlook-kancamagus-hwy-nh-2.jpg" loading="lazy" alt="Pemigewasset Overlook, Kancamagus Hwy, NH">
               </button>
-              <button class="gallery-thumb" data-location="Pemigewasset Overlook, Kancamagus Hwy, NH" data-desc="6:30am start on the Kancamagus — mountain view at Pemigewasset Overlook" data-map="https://www.google.com/maps?q=Pemigewasset+Overlook,+NH">
+              <button class="gallery-thumb" data-location="Pemigewasset Overlook, Kancamagus Hwy, NH" data-desc="6:30am start on the Kancamagus — mountain view at Pemigewasset Overlook" data-desc-es="Salida a las 6:30am por el Kancamagus — vista de montaña en Pemigewasset Overlook" data-map="https://www.google.com/maps?q=Pemigewasset+Overlook,+NH">
                 <img src="images/pemigewasset-overlook-kancamagus-hwy-nh-3.jpg" loading="lazy" alt="Pemigewasset Overlook, Kancamagus Hwy, NH">
               </button>
             </div>
@@ -1086,19 +1147,19 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">Lower Falls, Kancamagus Hwy, NH</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH">
+              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-desc-es="Paramos en Lower Falls para caminar sobre las rocas junto al río Swift" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH">
                 <img src="images/lower-falls-kancamagus-hwy-nh-1.jpg" loading="lazy" alt="Lower Falls, Kancamagus Hwy, NH">
               </button>
-              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH">
+              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-desc-es="Paramos en Lower Falls para caminar sobre las rocas junto al río Swift" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH">
                 <img src="images/lower-falls-kancamagus-hwy-nh-2.jpg" loading="lazy" alt="Lower Falls, Kancamagus Hwy, NH">
               </button>
-              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH">
+              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-desc-es="Paramos en Lower Falls para caminar sobre las rocas junto al río Swift" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH">
                 <img src="images/lower-falls-kancamagus-hwy-nh-3.jpg" loading="lazy" alt="Lower Falls, Kancamagus Hwy, NH">
               </button>
-              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH">
+              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-desc-es="Paramos en Lower Falls para caminar sobre las rocas junto al río Swift" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH">
                 <img src="images/lower-falls-kancamagus-hwy-nh-4.jpg" loading="lazy" alt="Lower Falls, Kancamagus Hwy, NH">
               </button>
-              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH">
+              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-desc-es="Paramos en Lower Falls para caminar sobre las rocas junto al río Swift" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH">
                 <img src="images/lower-falls-kancamagus-hwy-nh-5.jpg" loading="lazy" alt="Lower Falls, Kancamagus Hwy, NH">
               </button>
             </div>
@@ -1106,16 +1167,16 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">Doubling Point Lighthouse, Arrowsic, ME</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Doubling Point Lighthouse, Arrowsic, ME" data-desc="Stopped at the lighthouse after lunch" data-map="https://www.google.com/maps?q=Doubling+Point+Lighthouse,+140+Doubling+Point+Rd,+Arrowsic,+ME">
+              <button class="gallery-thumb" data-location="Doubling Point Lighthouse, Arrowsic, ME" data-desc="Stopped at the lighthouse after lunch" data-desc-es="Paramos en el faro después del almuerzo" data-map="https://www.google.com/maps?q=Doubling+Point+Lighthouse,+140+Doubling+Point+Rd,+Arrowsic,+ME">
                 <img src="images/doubling-point-lighthouse-arrowsic-me-1.jpg" loading="lazy" alt="Doubling Point Lighthouse, Arrowsic, ME">
               </button>
-              <button class="gallery-thumb" data-location="Doubling Point Lighthouse, Arrowsic, ME" data-desc="Stopped at the lighthouse after lunch" data-map="https://www.google.com/maps?q=Doubling+Point+Lighthouse,+140+Doubling+Point+Rd,+Arrowsic,+ME">
+              <button class="gallery-thumb" data-location="Doubling Point Lighthouse, Arrowsic, ME" data-desc="Stopped at the lighthouse after lunch" data-desc-es="Paramos en el faro después del almuerzo" data-map="https://www.google.com/maps?q=Doubling+Point+Lighthouse,+140+Doubling+Point+Rd,+Arrowsic,+ME">
                 <img src="images/doubling-point-lighthouse-arrowsic-me-2.jpg" loading="lazy" alt="Doubling Point Lighthouse, Arrowsic, ME">
               </button>
-              <button class="gallery-thumb" data-location="Doubling Point Lighthouse, Arrowsic, ME" data-desc="Stopped at the lighthouse after lunch" data-map="https://www.google.com/maps?q=Doubling+Point+Lighthouse,+140+Doubling+Point+Rd,+Arrowsic,+ME">
+              <button class="gallery-thumb" data-location="Doubling Point Lighthouse, Arrowsic, ME" data-desc="Stopped at the lighthouse after lunch" data-desc-es="Paramos en el faro después del almuerzo" data-map="https://www.google.com/maps?q=Doubling+Point+Lighthouse,+140+Doubling+Point+Rd,+Arrowsic,+ME">
                 <img src="images/doubling-point-lighthouse-arrowsic-me-3.jpg" loading="lazy" alt="Doubling Point Lighthouse, Arrowsic, ME">
               </button>
-              <button class="gallery-thumb" data-location="Doubling Point Lighthouse, Arrowsic, ME" data-desc="Stopped at the lighthouse after lunch" data-map="https://www.google.com/maps?q=Doubling+Point+Lighthouse,+140+Doubling+Point+Rd,+Arrowsic,+ME">
+              <button class="gallery-thumb" data-location="Doubling Point Lighthouse, Arrowsic, ME" data-desc="Stopped at the lighthouse after lunch" data-desc-es="Paramos en el faro después del almuerzo" data-map="https://www.google.com/maps?q=Doubling+Point+Lighthouse,+140+Doubling+Point+Rd,+Arrowsic,+ME">
                 <img src="images/doubling-point-lighthouse-arrowsic-me-4.jpg" loading="lazy" alt="Doubling Point Lighthouse, Arrowsic, ME">
               </button>
             </div>
@@ -1123,20 +1184,20 @@
       </div>
 
       <div class="day-gallery">
-        <p class="block-label">Day 3 — Sunday, Sept 6</p>
+        <p class="block-label"><span class="i18n-en">Day 3 — Sunday, Sept 6</span><span class="i18n-es">Día 3 — domingo, 6 de sept</span></p>
           <div class="stop-gallery">
             <p class="stop-gallery-label">Bass Beach, Rye, NH</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Bass Beach, Rye, NH" data-desc="Photo stop along the rocky shore" data-map="https://www.google.com/maps?q=Bass+Beach,+Rye,+NH">
+              <button class="gallery-thumb" data-location="Bass Beach, Rye, NH" data-desc="Photo stop along the rocky shore" data-desc-es="Parada para fotos en la costa rocosa" data-map="https://www.google.com/maps?q=Bass+Beach,+Rye,+NH">
                 <img src="images/bass-beach-rye-nh-1.jpg" loading="lazy" alt="Bass Beach, Rye, NH">
               </button>
-              <button class="gallery-thumb" data-location="Bass Beach, Rye, NH" data-desc="Photo stop along the rocky shore" data-map="https://www.google.com/maps?q=Bass+Beach,+Rye,+NH">
+              <button class="gallery-thumb" data-location="Bass Beach, Rye, NH" data-desc="Photo stop along the rocky shore" data-desc-es="Parada para fotos en la costa rocosa" data-map="https://www.google.com/maps?q=Bass+Beach,+Rye,+NH">
                 <img src="images/bass-beach-rye-nh-2.jpg" loading="lazy" alt="Bass Beach, Rye, NH">
               </button>
-              <button class="gallery-thumb" data-location="Bass Beach, Rye, NH" data-desc="Photo stop along the rocky shore" data-map="https://www.google.com/maps?q=Bass+Beach,+Rye,+NH">
+              <button class="gallery-thumb" data-location="Bass Beach, Rye, NH" data-desc="Photo stop along the rocky shore" data-desc-es="Parada para fotos en la costa rocosa" data-map="https://www.google.com/maps?q=Bass+Beach,+Rye,+NH">
                 <img src="images/bass-beach-rye-nh-3.jpg" loading="lazy" alt="Bass Beach, Rye, NH">
               </button>
-              <button class="gallery-thumb" data-location="Bass Beach, Rye, NH" data-desc="Photo stop along the rocky shore" data-map="https://www.google.com/maps?q=Bass+Beach,+Rye,+NH">
+              <button class="gallery-thumb" data-location="Bass Beach, Rye, NH" data-desc="Photo stop along the rocky shore" data-desc-es="Parada para fotos en la costa rocosa" data-map="https://www.google.com/maps?q=Bass+Beach,+Rye,+NH">
                 <img src="images/bass-beach-rye-nh-4.jpg" loading="lazy" alt="Bass Beach, Rye, NH">
               </button>
             </div>
@@ -1145,40 +1206,40 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">Hammond Castle Museum, Gloucester, MA</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
                 <img src="images/hammond-castle-museum-gloucester-ma-1.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
                 <img src="images/hammond-castle-museum-gloucester-ma-2.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
                 <img src="images/hammond-castle-museum-gloucester-ma-3.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
                 <img src="images/hammond-castle-museum-gloucester-ma-4.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
                 <img src="images/hammond-castle-museum-gloucester-ma-5.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
                 <img src="images/hammond-castle-museum-gloucester-ma-6.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
                 <img src="images/hammond-castle-museum-gloucester-ma-7.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
                 <img src="images/hammond-castle-museum-gloucester-ma-8.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
                 <img src="images/hammond-castle-museum-gloucester-ma-9.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
                 <img src="images/hammond-castle-museum-gloucester-ma-10.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
                 <img src="images/hammond-castle-museum-gloucester-ma-11.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
                 <img src="images/hammond-castle-museum-gloucester-ma-12.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
             </div>
@@ -1187,13 +1248,13 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">La Esquina Del Sabor, Winthrop, MA</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="La Esquina Del Sabor, Winthrop, MA" data-desc="Lunch stop" data-map="https://www.google.com/maps?q=La+Esquina+Del+Sabor,+19+Crest+Ave,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="La Esquina Del Sabor, Winthrop, MA" data-desc="Lunch stop" data-desc-es="Parada para almorzar" data-map="https://www.google.com/maps?q=La+Esquina+Del+Sabor,+19+Crest+Ave,+Winthrop,+MA">
                 <img src="images/la-esquina-del-sabor-winthrop-ma-1.jpg" loading="lazy" alt="La Esquina Del Sabor, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="La Esquina Del Sabor, Winthrop, MA" data-desc="Lunch stop" data-map="https://www.google.com/maps?q=La+Esquina+Del+Sabor,+19+Crest+Ave,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="La Esquina Del Sabor, Winthrop, MA" data-desc="Lunch stop" data-desc-es="Parada para almorzar" data-map="https://www.google.com/maps?q=La+Esquina+Del+Sabor,+19+Crest+Ave,+Winthrop,+MA">
                 <img src="images/la-esquina-del-sabor-winthrop-ma-2.jpg" loading="lazy" alt="La Esquina Del Sabor, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="La Esquina Del Sabor, Winthrop, MA" data-desc="Lunch stop" data-map="https://www.google.com/maps?q=La+Esquina+Del+Sabor,+19+Crest+Ave,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="La Esquina Del Sabor, Winthrop, MA" data-desc="Lunch stop" data-desc-es="Parada para almorzar" data-map="https://www.google.com/maps?q=La+Esquina+Del+Sabor,+19+Crest+Ave,+Winthrop,+MA">
                 <img src="images/la-esquina-del-sabor-winthrop-ma-3.jpg" loading="lazy" alt="La Esquina Del Sabor, Winthrop, MA">
               </button>
             </div>
@@ -1202,28 +1263,28 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">Deer Island, Winthrop, MA</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
                 <img src="images/deer-island-winthrop-ma-1.jpg" loading="lazy" alt="Deer Island, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
                 <img src="images/deer-island-winthrop-ma-2.jpg" loading="lazy" alt="Deer Island, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
                 <img src="images/deer-island-winthrop-ma-3.jpg" loading="lazy" alt="Deer Island, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
                 <img src="images/deer-island-winthrop-ma-4.jpg" loading="lazy" alt="Deer Island, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
                 <img src="images/deer-island-winthrop-ma-5.jpg" loading="lazy" alt="Deer Island, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
                 <img src="images/deer-island-winthrop-ma-6.jpg" loading="lazy" alt="Deer Island, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
                 <img src="images/deer-island-winthrop-ma-7.jpg" loading="lazy" alt="Deer Island, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
                 <img src="images/deer-island-winthrop-ma-8.jpg" loading="lazy" alt="Deer Island, Winthrop, MA">
               </button>
             </div>
@@ -1232,10 +1293,10 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">Grist Mill Pond, Sudbury, MA</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Grist Mill Pond, Sudbury, MA" data-desc="Final stop of the day — the historic grist mill" data-map="https://www.google.com/maps?q=Wayside+Inn+Grist+Mill,+Sudbury,+MA">
+              <button class="gallery-thumb" data-location="Grist Mill Pond, Sudbury, MA" data-desc="Final stop of the day — the historic grist mill" data-desc-es="Última parada del día — el histórico molino de agua" data-map="https://www.google.com/maps?q=Wayside+Inn+Grist+Mill,+Sudbury,+MA">
                 <img src="images/grist-mill-pond-sudbury-ma-1.jpg" loading="lazy" alt="Grist Mill Pond, Sudbury, MA">
               </button>
-              <button class="gallery-thumb" data-location="Grist Mill Pond, Sudbury, MA" data-desc="Final stop of the day — the historic grist mill" data-map="https://www.google.com/maps?q=Wayside+Inn+Grist+Mill,+Sudbury,+MA">
+              <button class="gallery-thumb" data-location="Grist Mill Pond, Sudbury, MA" data-desc="Final stop of the day — the historic grist mill" data-desc-es="Última parada del día — el histórico molino de agua" data-map="https://www.google.com/maps?q=Wayside+Inn+Grist+Mill,+Sudbury,+MA">
                 <img src="images/grist-mill-pond-sudbury-ma-2.jpg" loading="lazy" alt="Grist Mill Pond, Sudbury, MA">
               </button>
             </div>
@@ -1245,7 +1306,7 @@
 
   </div>
 
-  <footer>Mountains to Seacoast Loop · Sept 4–6, 2026 · Waltham, MA</footer>
+  <footer><span class="i18n-en">Mountains to Seacoast Loop · Sept 4–6, 2026 · Waltham, MA</span><span class="i18n-es">De las Montañas a la Costa · 4–6 sept, 2026 · Waltham, MA</span></footer>
 
 </div>
 
