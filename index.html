@@ -578,6 +578,10 @@
   }
   .lightbox[hidden]{display:none;}
   .lightbox-img{max-width:min(92vw,700px); max-height:65vh; object-fit:contain; border-radius:6px; border:2px solid var(--ink);}
+  @media (min-width:641px){
+    .lightbox-img{max-width:min(88vw,1200px); max-height:84vh;}
+    .lightbox-caption{max-width:700px;}
+  }
   .lightbox-caption{color:var(--paper); text-align:center; margin-top:16px; max-width:520px; padding:0 12px;}
   .lightbox-location{
     font-family:'IBM Plex Mono',monospace;
@@ -632,6 +636,27 @@
     background:#FBF3E6;
   }
   .full-trip-cta p{font-size:13px; color:var(--muted); margin:8px 0 14px;}
+
+  .view-all-cta{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    width:100%;
+    margin:0 0 32px;
+    padding:14px 20px;
+    background:var(--rust);
+    color:var(--white);
+    border:2px solid var(--ink);
+    border-radius:8px;
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+    transition:transform 0.12s ease;
+  }
+  .view-all-cta:hover{transform:translateY(-1px);}
+  .view-all-cta:focus-visible{outline:3px solid var(--mustard); outline-offset:2px;}
 
   .callout{
     margin-top:30px;
@@ -717,7 +742,7 @@
       lbVideo.removeAttribute('src');
       const img = btn.querySelector('img');
       lbImg.hidden = false;
-      lbImg.src = img.src;
+      lbImg.src = btn.dataset.full || img.src;
       lbImg.alt = img.alt || '';
     }
     const location = btn.dataset.location || '';
@@ -762,6 +787,12 @@
       tabBtn.classList.add('active');
       const panel = document.getElementById(tabBtn.dataset.tab);
       if (panel) panel.classList.add('active');
+      return;
+    }
+
+    if (e.target.closest('#view-all-photos')) {
+      const allThumbs = Array.from(document.querySelectorAll('#photos .gallery-thumb'));
+      if (allThumbs.length) openLightbox(allThumbs, 0);
       return;
     }
 
@@ -1026,6 +1057,8 @@
     <section class="panel" id="photos">
       <p class="route-intro"><span class="i18n-en">Every photo from the trip, in one place. Tap any thumbnail to see it full screen.</span><span class="i18n-es">Todas las fotos del viaje, en un solo lugar. Toca cualquier miniatura para verla en pantalla completa.</span></p>
 
+      <button type="button" class="view-all-cta" id="view-all-photos"><span class="i18n-en">🖼️ View All Photos — Day by Day</span><span class="i18n-es">🖼️ Ver Todas las Fotos — Día por Día</span></button>
+
       <div class="day-gallery">
         <p class="block-label"><span class="i18n-en">Day 1 — Friday, Sept 4</span><span class="i18n-es">Día 1 — viernes, 4 de sept</span></p>
           <div class="stop-gallery">
@@ -1146,13 +1179,13 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">Pemigewasset Overlook, Kancamagus Hwy, NH</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Pemigewasset Overlook, Kancamagus Hwy, NH" data-desc="6:30am start on the Kancamagus — mountain view at Pemigewasset Overlook" data-desc-es="Salida a las 6:30am por el Kancamagus — vista de montaña en Pemigewasset Overlook" data-map="https://www.google.com/maps?q=Pemigewasset+Overlook,+NH">
+              <button class="gallery-thumb" data-location="Pemigewasset Overlook, Kancamagus Hwy, NH" data-desc="6:30am start on the Kancamagus — mountain view at Pemigewasset Overlook" data-desc-es="Salida a las 6:30am por el Kancamagus — vista de montaña en Pemigewasset Overlook" data-map="https://www.google.com/maps?q=Pemigewasset+Overlook,+NH" data-full="images/pemigewasset-overlook-kancamagus-hwy-nh-1-full.jpg">
                 <img src="images/pemigewasset-overlook-kancamagus-hwy-nh-1.jpg" loading="lazy" alt="Pemigewasset Overlook, Kancamagus Hwy, NH">
               </button>
-              <button class="gallery-thumb" data-location="Pemigewasset Overlook, Kancamagus Hwy, NH" data-desc="6:30am start on the Kancamagus — mountain view at Pemigewasset Overlook" data-desc-es="Salida a las 6:30am por el Kancamagus — vista de montaña en Pemigewasset Overlook" data-map="https://www.google.com/maps?q=Pemigewasset+Overlook,+NH">
+              <button class="gallery-thumb" data-location="Pemigewasset Overlook, Kancamagus Hwy, NH" data-desc="6:30am start on the Kancamagus — mountain view at Pemigewasset Overlook" data-desc-es="Salida a las 6:30am por el Kancamagus — vista de montaña en Pemigewasset Overlook" data-map="https://www.google.com/maps?q=Pemigewasset+Overlook,+NH" data-full="images/pemigewasset-overlook-kancamagus-hwy-nh-2-full.jpg">
                 <img src="images/pemigewasset-overlook-kancamagus-hwy-nh-2.jpg" loading="lazy" alt="Pemigewasset Overlook, Kancamagus Hwy, NH">
               </button>
-              <button class="gallery-thumb" data-location="Pemigewasset Overlook, Kancamagus Hwy, NH" data-desc="6:30am start on the Kancamagus — mountain view at Pemigewasset Overlook" data-desc-es="Salida a las 6:30am por el Kancamagus — vista de montaña en Pemigewasset Overlook" data-map="https://www.google.com/maps?q=Pemigewasset+Overlook,+NH">
+              <button class="gallery-thumb" data-location="Pemigewasset Overlook, Kancamagus Hwy, NH" data-desc="6:30am start on the Kancamagus — mountain view at Pemigewasset Overlook" data-desc-es="Salida a las 6:30am por el Kancamagus — vista de montaña en Pemigewasset Overlook" data-map="https://www.google.com/maps?q=Pemigewasset+Overlook,+NH" data-full="images/pemigewasset-overlook-kancamagus-hwy-nh-3-full.jpg">
                 <img src="images/pemigewasset-overlook-kancamagus-hwy-nh-3.jpg" loading="lazy" alt="Pemigewasset Overlook, Kancamagus Hwy, NH">
               </button>
             </div>
@@ -1160,19 +1193,19 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">Lower Falls, Kancamagus Hwy, NH</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-desc-es="Paramos en Lower Falls para caminar sobre las rocas junto al río Swift" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH">
+              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-desc-es="Paramos en Lower Falls para caminar sobre las rocas junto al río Swift" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH" data-full="images/lower-falls-kancamagus-hwy-nh-1-full.jpg">
                 <img src="images/lower-falls-kancamagus-hwy-nh-1.jpg" loading="lazy" alt="Lower Falls, Kancamagus Hwy, NH">
               </button>
-              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-desc-es="Paramos en Lower Falls para caminar sobre las rocas junto al río Swift" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH">
+              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-desc-es="Paramos en Lower Falls para caminar sobre las rocas junto al río Swift" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH" data-full="images/lower-falls-kancamagus-hwy-nh-2-full.jpg">
                 <img src="images/lower-falls-kancamagus-hwy-nh-2.jpg" loading="lazy" alt="Lower Falls, Kancamagus Hwy, NH">
               </button>
-              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-desc-es="Paramos en Lower Falls para caminar sobre las rocas junto al río Swift" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH">
+              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-desc-es="Paramos en Lower Falls para caminar sobre las rocas junto al río Swift" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH" data-full="images/lower-falls-kancamagus-hwy-nh-3-full.jpg">
                 <img src="images/lower-falls-kancamagus-hwy-nh-3.jpg" loading="lazy" alt="Lower Falls, Kancamagus Hwy, NH">
               </button>
-              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-desc-es="Paramos en Lower Falls para caminar sobre las rocas junto al río Swift" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH">
+              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-desc-es="Paramos en Lower Falls para caminar sobre las rocas junto al río Swift" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH" data-full="images/lower-falls-kancamagus-hwy-nh-4-full.jpg">
                 <img src="images/lower-falls-kancamagus-hwy-nh-4.jpg" loading="lazy" alt="Lower Falls, Kancamagus Hwy, NH">
               </button>
-              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-desc-es="Paramos en Lower Falls para caminar sobre las rocas junto al río Swift" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH">
+              <button class="gallery-thumb" data-location="Lower Falls, Kancamagus Hwy, NH" data-desc="Stopped at Lower Falls to walk the rocks along the Swift River" data-desc-es="Paramos en Lower Falls para caminar sobre las rocas junto al río Swift" data-map="https://www.google.com/maps?q=Lower+Falls+Scenic+Area,+NH" data-full="images/lower-falls-kancamagus-hwy-nh-5-full.jpg">
                 <img src="images/lower-falls-kancamagus-hwy-nh-5.jpg" loading="lazy" alt="Lower Falls, Kancamagus Hwy, NH">
               </button>
             </div>
@@ -1180,16 +1213,16 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">Doubling Point Lighthouse, Arrowsic, ME</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Doubling Point Lighthouse, Arrowsic, ME" data-desc="Stopped at the lighthouse after lunch" data-desc-es="Paramos en el faro después del almuerzo" data-map="https://www.google.com/maps?q=Doubling+Point+Lighthouse,+140+Doubling+Point+Rd,+Arrowsic,+ME">
+              <button class="gallery-thumb" data-location="Doubling Point Lighthouse, Arrowsic, ME" data-desc="Stopped at the lighthouse after lunch" data-desc-es="Paramos en el faro después del almuerzo" data-map="https://www.google.com/maps?q=Doubling+Point+Lighthouse,+140+Doubling+Point+Rd,+Arrowsic,+ME" data-full="images/doubling-point-lighthouse-arrowsic-me-1-full.jpg">
                 <img src="images/doubling-point-lighthouse-arrowsic-me-1.jpg" loading="lazy" alt="Doubling Point Lighthouse, Arrowsic, ME">
               </button>
-              <button class="gallery-thumb" data-location="Doubling Point Lighthouse, Arrowsic, ME" data-desc="Stopped at the lighthouse after lunch" data-desc-es="Paramos en el faro después del almuerzo" data-map="https://www.google.com/maps?q=Doubling+Point+Lighthouse,+140+Doubling+Point+Rd,+Arrowsic,+ME">
+              <button class="gallery-thumb" data-location="Doubling Point Lighthouse, Arrowsic, ME" data-desc="Stopped at the lighthouse after lunch" data-desc-es="Paramos en el faro después del almuerzo" data-map="https://www.google.com/maps?q=Doubling+Point+Lighthouse,+140+Doubling+Point+Rd,+Arrowsic,+ME" data-full="images/doubling-point-lighthouse-arrowsic-me-2-full.jpg">
                 <img src="images/doubling-point-lighthouse-arrowsic-me-2.jpg" loading="lazy" alt="Doubling Point Lighthouse, Arrowsic, ME">
               </button>
-              <button class="gallery-thumb" data-location="Doubling Point Lighthouse, Arrowsic, ME" data-desc="Stopped at the lighthouse after lunch" data-desc-es="Paramos en el faro después del almuerzo" data-map="https://www.google.com/maps?q=Doubling+Point+Lighthouse,+140+Doubling+Point+Rd,+Arrowsic,+ME">
+              <button class="gallery-thumb" data-location="Doubling Point Lighthouse, Arrowsic, ME" data-desc="Stopped at the lighthouse after lunch" data-desc-es="Paramos en el faro después del almuerzo" data-map="https://www.google.com/maps?q=Doubling+Point+Lighthouse,+140+Doubling+Point+Rd,+Arrowsic,+ME" data-full="images/doubling-point-lighthouse-arrowsic-me-3-full.jpg">
                 <img src="images/doubling-point-lighthouse-arrowsic-me-3.jpg" loading="lazy" alt="Doubling Point Lighthouse, Arrowsic, ME">
               </button>
-              <button class="gallery-thumb" data-location="Doubling Point Lighthouse, Arrowsic, ME" data-desc="Stopped at the lighthouse after lunch" data-desc-es="Paramos en el faro después del almuerzo" data-map="https://www.google.com/maps?q=Doubling+Point+Lighthouse,+140+Doubling+Point+Rd,+Arrowsic,+ME">
+              <button class="gallery-thumb" data-location="Doubling Point Lighthouse, Arrowsic, ME" data-desc="Stopped at the lighthouse after lunch" data-desc-es="Paramos en el faro después del almuerzo" data-map="https://www.google.com/maps?q=Doubling+Point+Lighthouse,+140+Doubling+Point+Rd,+Arrowsic,+ME" data-full="images/doubling-point-lighthouse-arrowsic-me-4-full.jpg">
                 <img src="images/doubling-point-lighthouse-arrowsic-me-4.jpg" loading="lazy" alt="Doubling Point Lighthouse, Arrowsic, ME">
               </button>
             </div>
@@ -1201,16 +1234,16 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">Bass Beach, Rye, NH</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Bass Beach, Rye, NH" data-desc="Photo stop along the rocky shore" data-desc-es="Parada para fotos en la costa rocosa" data-map="https://www.google.com/maps?q=Bass+Beach,+Rye,+NH">
+              <button class="gallery-thumb" data-location="Bass Beach, Rye, NH" data-desc="Photo stop along the rocky shore" data-desc-es="Parada para fotos en la costa rocosa" data-map="https://www.google.com/maps?q=Bass+Beach,+Rye,+NH" data-full="images/bass-beach-rye-nh-1-full.jpg">
                 <img src="images/bass-beach-rye-nh-1.jpg" loading="lazy" alt="Bass Beach, Rye, NH">
               </button>
-              <button class="gallery-thumb" data-location="Bass Beach, Rye, NH" data-desc="Photo stop along the rocky shore" data-desc-es="Parada para fotos en la costa rocosa" data-map="https://www.google.com/maps?q=Bass+Beach,+Rye,+NH">
+              <button class="gallery-thumb" data-location="Bass Beach, Rye, NH" data-desc="Photo stop along the rocky shore" data-desc-es="Parada para fotos en la costa rocosa" data-map="https://www.google.com/maps?q=Bass+Beach,+Rye,+NH" data-full="images/bass-beach-rye-nh-2-full.jpg">
                 <img src="images/bass-beach-rye-nh-2.jpg" loading="lazy" alt="Bass Beach, Rye, NH">
               </button>
-              <button class="gallery-thumb" data-location="Bass Beach, Rye, NH" data-desc="Photo stop along the rocky shore" data-desc-es="Parada para fotos en la costa rocosa" data-map="https://www.google.com/maps?q=Bass+Beach,+Rye,+NH">
+              <button class="gallery-thumb" data-location="Bass Beach, Rye, NH" data-desc="Photo stop along the rocky shore" data-desc-es="Parada para fotos en la costa rocosa" data-map="https://www.google.com/maps?q=Bass+Beach,+Rye,+NH" data-full="images/bass-beach-rye-nh-3-full.jpg">
                 <img src="images/bass-beach-rye-nh-3.jpg" loading="lazy" alt="Bass Beach, Rye, NH">
               </button>
-              <button class="gallery-thumb" data-location="Bass Beach, Rye, NH" data-desc="Photo stop along the rocky shore" data-desc-es="Parada para fotos en la costa rocosa" data-map="https://www.google.com/maps?q=Bass+Beach,+Rye,+NH">
+              <button class="gallery-thumb" data-location="Bass Beach, Rye, NH" data-desc="Photo stop along the rocky shore" data-desc-es="Parada para fotos en la costa rocosa" data-map="https://www.google.com/maps?q=Bass+Beach,+Rye,+NH" data-full="images/bass-beach-rye-nh-4-full.jpg">
                 <img src="images/bass-beach-rye-nh-4.jpg" loading="lazy" alt="Bass Beach, Rye, NH">
               </button>
             </div>
@@ -1219,40 +1252,40 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">Hammond Castle Museum, Gloucester, MA</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA" data-full="images/hammond-castle-museum-gloucester-ma-1-full.jpg">
                 <img src="images/hammond-castle-museum-gloucester-ma-1.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA" data-full="images/hammond-castle-museum-gloucester-ma-2-full.jpg">
                 <img src="images/hammond-castle-museum-gloucester-ma-2.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA" data-full="images/hammond-castle-museum-gloucester-ma-3-full.jpg">
                 <img src="images/hammond-castle-museum-gloucester-ma-3.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA" data-full="images/hammond-castle-museum-gloucester-ma-4-full.jpg">
                 <img src="images/hammond-castle-museum-gloucester-ma-4.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA" data-full="images/hammond-castle-museum-gloucester-ma-5-full.jpg">
                 <img src="images/hammond-castle-museum-gloucester-ma-5.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA" data-full="images/hammond-castle-museum-gloucester-ma-6-full.jpg">
                 <img src="images/hammond-castle-museum-gloucester-ma-6.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA" data-full="images/hammond-castle-museum-gloucester-ma-7-full.jpg">
                 <img src="images/hammond-castle-museum-gloucester-ma-7.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA" data-full="images/hammond-castle-museum-gloucester-ma-8-full.jpg">
                 <img src="images/hammond-castle-museum-gloucester-ma-8.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA" data-full="images/hammond-castle-museum-gloucester-ma-9-full.jpg">
                 <img src="images/hammond-castle-museum-gloucester-ma-9.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA" data-full="images/hammond-castle-museum-gloucester-ma-10-full.jpg">
                 <img src="images/hammond-castle-museum-gloucester-ma-10.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA" data-full="images/hammond-castle-museum-gloucester-ma-11-full.jpg">
                 <img src="images/hammond-castle-museum-gloucester-ma-11.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
-              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA">
+              <button class="gallery-thumb" data-location="Hammond Castle Museum, Gloucester, MA" data-desc="Touring the castle overlooking the water" data-desc-es="Recorriendo el castillo con vista al mar" data-map="https://www.google.com/maps?q=Hammond+Castle+Museum,+Gloucester,+MA" data-full="images/hammond-castle-museum-gloucester-ma-12-full.jpg">
                 <img src="images/hammond-castle-museum-gloucester-ma-12.jpg" loading="lazy" alt="Hammond Castle Museum, Gloucester, MA">
               </button>
             </div>
@@ -1261,13 +1294,13 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">La Esquina Del Sabor, Winthrop, MA</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="La Esquina Del Sabor, Winthrop, MA" data-desc="Lunch stop" data-desc-es="Parada para almorzar" data-map="https://www.google.com/maps?q=La+Esquina+Del+Sabor,+19+Crest+Ave,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="La Esquina Del Sabor, Winthrop, MA" data-desc="Lunch stop" data-desc-es="Parada para almorzar" data-map="https://www.google.com/maps?q=La+Esquina+Del+Sabor,+19+Crest+Ave,+Winthrop,+MA" data-full="images/la-esquina-del-sabor-winthrop-ma-1-full.jpg">
                 <img src="images/la-esquina-del-sabor-winthrop-ma-1.jpg" loading="lazy" alt="La Esquina Del Sabor, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="La Esquina Del Sabor, Winthrop, MA" data-desc="Lunch stop" data-desc-es="Parada para almorzar" data-map="https://www.google.com/maps?q=La+Esquina+Del+Sabor,+19+Crest+Ave,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="La Esquina Del Sabor, Winthrop, MA" data-desc="Lunch stop" data-desc-es="Parada para almorzar" data-map="https://www.google.com/maps?q=La+Esquina+Del+Sabor,+19+Crest+Ave,+Winthrop,+MA" data-full="images/la-esquina-del-sabor-winthrop-ma-2-full.jpg">
                 <img src="images/la-esquina-del-sabor-winthrop-ma-2.jpg" loading="lazy" alt="La Esquina Del Sabor, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="La Esquina Del Sabor, Winthrop, MA" data-desc="Lunch stop" data-desc-es="Parada para almorzar" data-map="https://www.google.com/maps?q=La+Esquina+Del+Sabor,+19+Crest+Ave,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="La Esquina Del Sabor, Winthrop, MA" data-desc="Lunch stop" data-desc-es="Parada para almorzar" data-map="https://www.google.com/maps?q=La+Esquina+Del+Sabor,+19+Crest+Ave,+Winthrop,+MA" data-full="images/la-esquina-del-sabor-winthrop-ma-3-full.jpg">
                 <img src="images/la-esquina-del-sabor-winthrop-ma-3.jpg" loading="lazy" alt="La Esquina Del Sabor, Winthrop, MA">
               </button>
             </div>
@@ -1276,28 +1309,28 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">Deer Island, Winthrop, MA</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA" data-full="images/deer-island-winthrop-ma-1-full.jpg">
                 <img src="images/deer-island-winthrop-ma-1.jpg" loading="lazy" alt="Deer Island, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA" data-full="images/deer-island-winthrop-ma-2-full.jpg">
                 <img src="images/deer-island-winthrop-ma-2.jpg" loading="lazy" alt="Deer Island, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA" data-full="images/deer-island-winthrop-ma-3-full.jpg">
                 <img src="images/deer-island-winthrop-ma-3.jpg" loading="lazy" alt="Deer Island, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA" data-full="images/deer-island-winthrop-ma-4-full.jpg">
                 <img src="images/deer-island-winthrop-ma-4.jpg" loading="lazy" alt="Deer Island, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA" data-full="images/deer-island-winthrop-ma-5-full.jpg">
                 <img src="images/deer-island-winthrop-ma-5.jpg" loading="lazy" alt="Deer Island, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA" data-full="images/deer-island-winthrop-ma-6-full.jpg">
                 <img src="images/deer-island-winthrop-ma-6.jpg" loading="lazy" alt="Deer Island, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA" data-full="images/deer-island-winthrop-ma-7-full.jpg">
                 <img src="images/deer-island-winthrop-ma-7.jpg" loading="lazy" alt="Deer Island, Winthrop, MA">
               </button>
-              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA">
+              <button class="gallery-thumb" data-location="Deer Island, Winthrop, MA" data-desc="Views out over the harbor" data-desc-es="Vistas sobre el puerto" data-map="https://www.google.com/maps?q=Deer+Island,+Winthrop,+MA" data-full="images/deer-island-winthrop-ma-8-full.jpg">
                 <img src="images/deer-island-winthrop-ma-8.jpg" loading="lazy" alt="Deer Island, Winthrop, MA">
               </button>
             </div>
@@ -1306,10 +1339,10 @@
           <div class="stop-gallery">
             <p class="stop-gallery-label">Grist Mill Pond, Sudbury, MA</p>
             <div class="gallery-grid">
-              <button class="gallery-thumb" data-location="Grist Mill Pond, Sudbury, MA" data-desc="Final stop of the day — the historic grist mill" data-desc-es="Última parada del día — el histórico molino de agua" data-map="https://www.google.com/maps?q=Wayside+Inn+Grist+Mill,+Sudbury,+MA">
+              <button class="gallery-thumb" data-location="Grist Mill Pond, Sudbury, MA" data-desc="Final stop of the day — the historic grist mill" data-desc-es="Última parada del día — el histórico molino de agua" data-map="https://www.google.com/maps?q=Wayside+Inn+Grist+Mill,+Sudbury,+MA" data-full="images/grist-mill-pond-sudbury-ma-1-full.jpg">
                 <img src="images/grist-mill-pond-sudbury-ma-1.jpg" loading="lazy" alt="Grist Mill Pond, Sudbury, MA">
               </button>
-              <button class="gallery-thumb" data-location="Grist Mill Pond, Sudbury, MA" data-desc="Final stop of the day — the historic grist mill" data-desc-es="Última parada del día — el histórico molino de agua" data-map="https://www.google.com/maps?q=Wayside+Inn+Grist+Mill,+Sudbury,+MA">
+              <button class="gallery-thumb" data-location="Grist Mill Pond, Sudbury, MA" data-desc="Final stop of the day — the historic grist mill" data-desc-es="Última parada del día — el histórico molino de agua" data-map="https://www.google.com/maps?q=Wayside+Inn+Grist+Mill,+Sudbury,+MA" data-full="images/grist-mill-pond-sudbury-ma-2-full.jpg">
                 <img src="images/grist-mill-pond-sudbury-ma-2.jpg" loading="lazy" alt="Grist Mill Pond, Sudbury, MA">
               </button>
             </div>
